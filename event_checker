@@ -1,0 +1,13 @@
+import pygame
+from Board import *
+import config
+
+
+class eventChecker:
+
+  def __init__(self, object):
+    self.object = object
+
+
+  def checkEvents():
+    pass
