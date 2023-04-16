@@ -1,18 +1,18 @@
-class SquareTable:
+from Singleton import Singleton
+from config import *
+
+
+class SquareTable(metaclass=Singleton):
   """Create a Table of the squares of the board which contain information about the status of the board at any given moment"""
   def __init__(self):
     self.squareTable = dict()
-    self.POSITION = 0
-    self.OCCUPIED = 1
-    self.COLOR = 2
-    self.PIECENAME = 3
     self.setSquarePositions()
     self.setOccupied()
     self.setPieces()
     
 
   def setSquarePositions(self):
-    """Default piece positions"""
+    """Center X, Y for all squares attached to squarename"""
 
     chars = "abcdefgh"
 
@@ -41,6 +41,7 @@ class SquareTable:
         self.squareTable[square].extend([False, ""])
 
   def setPieces(self):
+    """Set up starting position"""
     for square in self.squareTable:
       if square == 'a1':
         self.squareTable[square].append("ROOK")
@@ -113,26 +114,51 @@ class SquareTable:
     return self.squareTable
 
   def getPositions(self, square):
-    return self.squareTable[square][self.POSITION]
+    return self.squareTable[square][POSITION]
 
   def getOccupied(self, square):
-    return self.squareTable[square][self.OCCUPIED]
+    return self.squareTable[square][OCCUPIED]
 
   def getRow(self, square):
     return f'\n\
     SQUARE: {square}\n\
-    POSITIONS: {self.squareTable[square][self.POSITION]}\n\
-    OCCUPIED: {str(self.squareTable[square][self.OCCUPIED])}\n\
-    COLOR: {self.squareTable[square][self.COLOR]}'
+    POSITIONS: {self.squareTable[square][POSITION]}\n\
+    OCCUPIED: {str(self.squareTable[square][OCCUPIED])}\n\
+    COLOR: {self.squareTable[square][COLOR]}\n\
+    PIECE: {self.squareTable[square][PIECENAME]}'
 
-  def getSquare(self, pos):
+  def getSquareFromPos(self, pos):
     pos_x = pos[0]
     pos_y = pos[1]
-    square = list(filter(lambda s: self.squareTable[s][self.POSITION][0] in range(pos_x-37, pos_x+37) and self.squareTable[s][self.POSITION][1] in range(pos_y-37, pos_y+37), self.squareTable))
+    square = list(filter(lambda s: self.squareTable[s][POSITION][0] in range(pos_x-37, pos_x+37) and self.squareTable[s][POSITION][1] in range(pos_y-37, pos_y+37), self.squareTable))
+    return square[0]
+
+  def getSquareFromPiece(self, piece_name, piece_color):
+    square = list(filter(lambda s: self.squareTable[s][PIECENAME] == piece_name.upper() and self.squareTable[s][COLOR] == piece_color.upper(), self.squareTable))
     return square
+
+  def setMove(self, old_square, new_square):
+    self.squareTable[new_square][OCCUPIED] = self.squareTable[old_square][OCCUPIED]
+    self.squareTable[new_square][COLOR] = self.squareTable[old_square][COLOR]
+    self.squareTable[new_square][PIECENAME] = self.squareTable[old_square][PIECENAME]
+    self.emptySquare(old_square)
+
+  def emptySquare(self, square):
+    self.squareTable[square][OCCUPIED] = False
+    self.squareTable[square][COLOR] = ""
+    self.squareTable[square][PIECENAME] = ""
+
+  def print(self, square):
+    print(self.getRow(square))
 
 if __name__ == "__main__":
   s = SquareTable()
   # print(s.getFullTable())
-  # print(s.getRow('h1'))
-  print(*s.getSquare((211, 619)))
+  print(s.getRow('h1'))
+  s.emptySquare('h1')
+  print(s.getRow('h1'))
+  s.setMove('b1', 'h1')
+  s.print('b1')
+  s.print('h1')
+
+

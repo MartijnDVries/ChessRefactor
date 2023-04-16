@@ -1,9 +1,9 @@
 import pygame
 from config import *
+from Singleton import Singleton
 
 
-
-class ChessBoard:
+class ChessBoard(metaclass=Singleton):
   def __init__(self):
     self.rows = 8
     self.columns = 8
@@ -51,7 +51,6 @@ class ChessBoard:
     self.initBoard()
 
   def setSquareColor(self, white=WHITE, black=BLACK):
-    print("setting color")
     self.WHITE = white
     self.BLACK = black
     self.initBoard()

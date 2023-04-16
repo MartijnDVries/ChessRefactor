@@ -8,7 +8,6 @@ class Singleton(type):
 
 
 
-
 if __name__ == "__main__":
 
   class Logger(metaclass=Singleton):

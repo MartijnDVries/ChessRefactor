@@ -1,6 +1,7 @@
 import pygame
 from config import *
-
+from Moves import LegalMoves
+from SquareTable import SquareTable
 
 class Piece(pygame.sprite.Sprite):
 
@@ -12,31 +13,38 @@ class Piece(pygame.sprite.Sprite):
     self.image = pygame.image.load(IMGPATH + image_file + ".png")
     self.rect = self.image.get_rect()
     self.rect.center = position
+    self.original_position = position
+    self.checkMove = LegalMoves()
+    self.tableClass = SquareTable()
+    self.table = self.tableClass.squareTable
     self.active = False
     self.placed = True
 
   def __repr__(self):
-    return f"{self.color} {self.name} on {self.square}  POS: {self.rect.center}"
+    return f"{self.color} {self.name.lower()} on {self.square}  POS: {self.rect.center}\n"
 
-  def get_middle():
-    pass
-
-  
   def setActive(self, pos):
     if self.rect.collidepoint(pos):
       self.active = True
 
-  def move(self, pos):
+  def dragTo(self, pos):
     if self.active:
-      self.rect.x = pos[0]
-      self.rect.y = pos[1]
+      self.rect.center = (pos[0], pos[1])
 
   def place(self):
     if self.active:
       self.active = False
-      print(self)
 
+  def update(self, new_pos, new_square):
+    self.rect.center = new_pos
+    self.original_position = new_pos
+    self.square = new_square
 
+  def placeback(self):
+    self.rect.center = self.original_position
+    
   def draw(self, surface):
     surface.blit(self.image, self.rect)
+
+
 
