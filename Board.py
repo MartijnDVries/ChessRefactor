@@ -45,15 +45,15 @@ class ChessBoard:
       pygame.draw.rect(surface, square[self.COLOR], square[self.RECT])
 
 
-  def events(self):
-    pos = pygame.mouse.get_pos()
-    for square in self.board:
-      if square[self.RECT].collidepoint(pos):
-        print(square[self.COLOR])
-
   def setPosition(self, left, top):
     self.start_X = left
     self.start_Y = top - 74
+    self.initBoard()
+
+  def setSquareColor(self, white=WHITE, black=BLACK):
+    print("setting color")
+    self.WHITE = white
+    self.BLACK = black
     self.initBoard()
   
 
