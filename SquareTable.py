@@ -13,7 +13,7 @@ class SquareTable:
 
   def setSquarePositions(self):
     """Default piece positions"""
-    
+
     chars = "abcdefgh"
 
     self.squareTable = dict()
@@ -125,7 +125,14 @@ class SquareTable:
     OCCUPIED: {str(self.squareTable[square][self.OCCUPIED])}\n\
     COLOR: {self.squareTable[square][self.COLOR]}'
 
+  def getSquare(self, pos):
+    pos_x = pos[0]
+    pos_y = pos[1]
+    square = list(filter(lambda s: self.squareTable[s][self.POSITION][0] in range(pos_x-37, pos_x+37) and self.squareTable[s][self.POSITION][1] in range(pos_y-37, pos_y+37), self.squareTable))
+    return square
+
 if __name__ == "__main__":
   s = SquareTable()
-  print(s.getFullTable())
-  print(s.getRow('h1'))
+  # print(s.getFullTable())
+  # print(s.getRow('h1'))
+  print(*s.getSquare((211, 619)))
