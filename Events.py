@@ -40,7 +40,7 @@ class EventChecker:
   def checkMove(self, piece, pos):
     if is_inside_board(pos):
       new_square = self.tableClass.getSquareFromPos(pos)
-      if self.move.is_legal(piece.square, new_square):
+      if self.move.is_legal(piece.square, new_square, piece.name):
         self.tableClass.setMove(piece.square, new_square)
         new_pos = self.table[new_square][POSITION]
         piece.update(new_pos, new_square)

@@ -1,7 +1,6 @@
 import pygame
 from config import *
-from Moves import LegalMoves
-from SquareTable import SquareTable
+
 
 class Piece(pygame.sprite.Sprite):
 
@@ -14,9 +13,6 @@ class Piece(pygame.sprite.Sprite):
     self.rect = self.image.get_rect()
     self.rect.center = position
     self.original_position = position
-    self.checkMove = LegalMoves()
-    self.tableClass = SquareTable()
-    self.table = self.tableClass.squareTable
     self.active = False
     self.placed = True
 

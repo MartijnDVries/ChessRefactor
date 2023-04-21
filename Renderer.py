@@ -1,10 +1,8 @@
 import pygame
-import os
 from Background import BackGroundImage
 from config import *
 from Views import Viewer
 from Events import EventChecker
-
 from ctypes import windll
 
 

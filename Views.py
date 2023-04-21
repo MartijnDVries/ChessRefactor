@@ -20,7 +20,11 @@ class Viewer:
   def game(self):
     self.board.draw(self.surface)
     for piece in self.pieces:
-      piece.draw(self.surface)
+      if not piece.active:
+        piece.draw(self.surface)
+    if any((active_piece := piece) for piece in self.pieces if piece.active):
+      active_piece.draw(self.surface)
+
 
 if __name__ == "__main__":
   pass

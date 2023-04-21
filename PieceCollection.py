@@ -18,12 +18,8 @@ class PieceCollection(metaclass=Singleton):
 
   def getCollection(self):
     pieceCollection = []
-    POSITION = 0
-    OCCUPIED = 1
-    COLOR = 2
-    PIECENAME = 3
     for square in self.table:
-      if self.table[square][OCCUPIED]:
+      if self.table[square][PIECENAME]:
         pieceCollection.append(Piece(*self.parseTable(self.table[square][PIECENAME], self.table[square][COLOR]), square, self.table[square][POSITION], self.table[square][PIECENAME]))
     return pieceCollection
 

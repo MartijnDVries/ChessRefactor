@@ -1,14 +1,15 @@
 from Singleton import Singleton
 from config import *
 import copy
-
+import ujson
+import json
 
 class SquareTable(metaclass=Singleton):
   """Create a Table of the squares of the board which contain information about the status of the board at any given moment"""
   def __init__(self):
     self.squareTable = dict()
     self.setSquarePositions()
-    self.setOccupied()
+    self.setColor()
     self.setPieces()
     
   def __str__(self):
@@ -33,103 +34,55 @@ class SquareTable(metaclass=Singleton):
         square = col + str(row)
         self.squareTable[square] = [[x, start_y]]
 
-  def setOccupied(self):
-    """Set default occupied"""
+  def setColor(self):
+    """Set default color on the squares"""
     for square in self.squareTable:
       row = int(square[1])
       if row == 1 or row == 2:
-        self.squareTable[square].extend([True, "WHITE"])
+        self.squareTable[square].append("WHITE")
       elif row == 7 or row == 8:
-        self.squareTable[square].extend([True, "BLACK"])
+        self.squareTable[square].append("BLACK")
       else:
-        self.squareTable[square].extend([False, ""])
+        self.squareTable[square].append("")
 
   def setPieces(self):
     """Set up starting position"""
     for square in self.squareTable:
-      if square == 'a1':
-        self.squareTable[square].append("ROOK")
-      elif square == 'a2':
+      row = int(square[1])
+      file =  square[0]
+      if row == 7 or row == 2:
         self.squareTable[square].append("PAWN")
-      elif square == 'a7':
-        self.squareTable[square].append("PAWN")
-      elif square == 'a8':
-        self.squareTable[square].append("ROOK")
-      elif square == 'b1':
-        self.squareTable[square].append("KNIGHT")
-      elif square == 'b2':
-        self.squareTable[square].append("PAWN")
-      elif square == 'b7':
-        self.squareTable[square].append("PAWN")
-      elif square == 'b8':
-        self.squareTable[square].append("KNIGHT")
-      elif square == 'c1':
-        self.squareTable[square].append("BISHOP")
-      elif square == 'c2':
-        self.squareTable[square].append("PAWN")
-      elif square == 'c7':
-        self.squareTable[square].append("PAWN")
-      elif square == 'c8':
-        self.squareTable[square].append("BISHOP")
-      elif square == 'd1':
-        self.squareTable[square].append("QUEEN")
-      elif square == 'd2':
-        self.squareTable[square].append("PAWN")
-      elif square == 'd7':
-        self.squareTable[square].append("PAWN")
-      elif square == 'd8':
-        self.squareTable[square].append("KING")
-      elif square == 'e1':
-        self.squareTable[square].append("KING")
-      elif square == 'e2':
-        self.squareTable[square].append("PAWN")
-      elif square == 'e7':
-        self.squareTable[square].append("PAWN")
-      elif square == 'e8':
-        self.squareTable[square].append("QUEEN")
-      elif square == 'f1':
-        self.squareTable[square].append("BISHOP")
-      elif square == 'f2':
-        self.squareTable[square].append("PAWN")
-      elif square == 'f7':
-        self.squareTable[square].append("PAWN")
-      elif square == 'f8':
-        self.squareTable[square].append("BISHOP")
-      elif square == 'g1':
-        self.squareTable[square].append("KNIGHT")
-      elif square == 'g2':
-        self.squareTable[square].append("PAWN")
-      elif square == 'g7':
-        self.squareTable[square].append("PAWN")
-      elif square == 'g8':
-        self.squareTable[square].append("KNIGHT")
-      elif square == 'h1':
-        self.squareTable[square].append("ROOK")
-      elif square == 'h2':
-        self.squareTable[square].append("PAWN")
-      elif square == 'h7':
-        self.squareTable[square].append("PAWN")
-      elif square == 'h8':
-        self.squareTable[square].append("ROOK")
+        continue
+      elif row == 1 or row  == 8:
+        if file == 'a' or file =='h':
+          self.squareTable[square].append("ROOK")
+          continue
+        elif file == 'b' or file == 'g':
+          self.squareTable[square].append("KNIGHT")
+        elif file == 'c' or file == 'f':
+          self.squareTable[square].append("BISHOP")
+        elif square == 'e1':
+          self.squareTable[square].append("KING")
+        elif square == 'e8':
+          self.squareTable[square].append("KING")
+        elif square == 'e8':
+          self.squareTable[square].append("KING")
+        elif square == 'd1':
+          self.squareTable[square].append("QUEEN")
+        elif square == 'd8':
+          self.squareTable[square].append("QUEEN")
       else:
         self.squareTable[square].append("")
 
-  def getFullTable(self):
+  def getTable(self):
     return self.squareTable
-
-  def getPositions(self, square):
-    return self.squareTable[square][POSITION]
-
-  def getOccupied(self, square):
-    return self.squareTable[square][OCCUPIED]
 
   def getRow(self, square):
     return f'\n\
     SQUARE: {square}\n\
     POSITIONS: {self.squareTable[square][POSITION]}\n\
-    OCCUPIED: {str(self.squareTable[square][OCCUPIED])}\n\
     COLOR: {self.squareTable[square][COLOR]}\n\
-    PIECE: {self.squareTable[square][PIECENAME]}'
+    PIECE: {self.squareTable[square][PIECENAME]}\n'
 
   def getSquareFromPos(self, pos):
     pos_x = pos[0]
@@ -144,7 +97,6 @@ class SquareTable(metaclass=Singleton):
   
   @staticmethod
   def setStaticMove(old_square, new_square, table):
-    table[new_square][OCCUPIED] = table[old_square][OCCUPIED]
     table[new_square][COLOR] = table[old_square][COLOR]
     table[new_square][PIECENAME] = table[old_square][PIECENAME]
     SquareTable.emptyStaticSquare(old_square, table)
@@ -152,18 +104,15 @@ class SquareTable(metaclass=Singleton):
 
   @staticmethod
   def emptyStaticSquare(square, table):
-    table[square][OCCUPIED] = False
     table[square][COLOR] = ""
     table[square][PIECENAME] = ""
 
   def setMove(self, old_square, new_square):
-    self.squareTable[new_square][OCCUPIED] = self.squareTable[old_square][OCCUPIED]
     self.squareTable[new_square][COLOR] = self.squareTable[old_square][COLOR]
     self.squareTable[new_square][PIECENAME] = self.squareTable[old_square][PIECENAME]
     self.emptySquare(old_square)
 
   def emptySquare(self, square):
-    self.squareTable[square][OCCUPIED] = False
     self.squareTable[square][COLOR] = ""
     self.squareTable[square][PIECENAME] = ""
 
@@ -173,8 +122,15 @@ class SquareTable(metaclass=Singleton):
 if __name__ == "__main__":
   s = SquareTable()
   # print(s.getFullTable())
-  s2 = copy.deepcopy(s.squareTable)
-  print(s2)
-  print(s.squareTable['e1'])
-  print(s.setStaticMove('e1', 'e5', s2)['e1'])
-  print(s.squareTable['e1'])
+  # s2 = copy.deepcopy(s.squareTable)
+  # print(s2)
+  # s.print('e1')
+  # print(s.setStaticMove('e1', 'e5', s2)['e1'])
+  # s.print('e1')
+  table = ujson.loads(ujson.dumps(s.squareTable))
+
+  s.setStaticMove('e1', 'e5', table)
+
+  s.print('e5')
+
+  print(table['e5'])
