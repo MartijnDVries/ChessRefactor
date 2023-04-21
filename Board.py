@@ -14,9 +14,10 @@ class ChessBoard(metaclass=Singleton):
     self.RECT = 1
     self.WHITE = WHITE
     self.BLACK = BLACK
-    self.initBoard()
+    self.loadBoard()
 
-  def initBoard(self):
+  def loadBoard(self):
+    self.board = []
     y = self.start_Y
     for row in range(self.rows):
       y += SQUAREHEIGHT
@@ -40,7 +41,7 @@ class ChessBoard(metaclass=Singleton):
 
   def draw(self, surface):
     if not self.board:
-      self.initBoard()
+      self.loadBoard()
     for square in self.board:
       pygame.draw.rect(surface, square[self.COLOR], square[self.RECT])
 
@@ -48,12 +49,12 @@ class ChessBoard(metaclass=Singleton):
   def setPosition(self, left, top):
     self.start_X = left
     self.start_Y = top - 74
-    self.initBoard()
+    self.loadBoard()
 
   def setSquareColor(self, white=WHITE, black=BLACK):
     self.WHITE = white
     self.BLACK = black
-    self.initBoard()
+    self.loadBoard()
   
 
 if __name__ == "__main__":

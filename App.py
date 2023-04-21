@@ -13,6 +13,7 @@ class App:
     self.Renderer.setScreen(1000, 700)
     self.Renderer.setBackground(RED)
     self.boardColor(black=(120,17,17))
+    
     self.Renderer.render(view)
 
   def boardColor(self, white=WHITE, black=BLACK):

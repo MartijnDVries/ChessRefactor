@@ -1,5 +1,6 @@
 from Singleton import Singleton
 from config import *
+import copy
 
 
 class SquareTable(metaclass=Singleton):
@@ -9,6 +10,9 @@ class SquareTable(metaclass=Singleton):
     self.setSquarePositions()
     self.setOccupied()
     self.setPieces()
+    
+  def __str__(self):
+    return str(self.__dict__)
     
 
   def setSquarePositions(self):
@@ -133,9 +137,24 @@ class SquareTable(metaclass=Singleton):
     square = list(filter(lambda s: self.squareTable[s][POSITION][0] in range(pos_x-37, pos_x+37) and self.squareTable[s][POSITION][1] in range(pos_y-37, pos_y+37), self.squareTable))
     return square[0]
 
-  def getSquareFromPiece(self, piece_name, piece_color):
-    square = list(filter(lambda s: self.squareTable[s][PIECENAME] == piece_name.upper() and self.squareTable[s][COLOR] == piece_color.upper(), self.squareTable))
+  @staticmethod
+  def getSquareFromPiece(piece_name, piece_color, table):
+    square = list(filter(lambda s: table[s][PIECENAME] == piece_name.upper() and table[s][COLOR] == piece_color.upper(), table))
     return square
+  
+  @staticmethod
+  def setStaticMove(old_square, new_square, table):
+    table[new_square][OCCUPIED] = table[old_square][OCCUPIED]
+    table[new_square][COLOR] = table[old_square][COLOR]
+    table[new_square][PIECENAME] = table[old_square][PIECENAME]
+    SquareTable.emptyStaticSquare(old_square, table)
+    return table
+
+  @staticmethod
+  def emptyStaticSquare(square, table):
+    table[square][OCCUPIED] = False
+    table[square][COLOR] = ""
+    table[square][PIECENAME] = ""
 
   def setMove(self, old_square, new_square):
     self.squareTable[new_square][OCCUPIED] = self.squareTable[old_square][OCCUPIED]
@@ -154,11 +173,8 @@ class SquareTable(metaclass=Singleton):
 if __name__ == "__main__":
   s = SquareTable()
   # print(s.getFullTable())
-  print(s.getRow('h1'))
-  s.emptySquare('h1')
-  print(s.getRow('h1'))
-  s.setMove('b1', 'h1')
-  s.print('b1')
-  s.print('h1')
-
-
+  s2 = copy.deepcopy(s.squareTable)
+  print(s2)
+  print(s.squareTable['e1'])
+  print(s.setStaticMove('e1', 'e5', s2)['e1'])
+  print(s.squareTable['e1'])

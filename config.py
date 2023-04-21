@@ -23,6 +23,9 @@ def is_inside_board(pos):
   if BOARDLEFT < pos[0] < BOARDRIGHT \
         and BOARDTOP < pos[1] < BOARDBOTTOM:
       return True
+ 
+def filter_none(squares):
+   return list(filter(lambda square: square is not None, squares))
   
 
 #COLORS
