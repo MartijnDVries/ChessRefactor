@@ -1,7 +1,7 @@
 from config import *
 from PieceCollection import PieceCollection
 from Board import ChessBoard
-
+from Game import Game
 
 class Viewer:
   def __init__(self, surface):
@@ -10,6 +10,7 @@ class Viewer:
     self.board = ChessBoard()
     self.piecesInstance = PieceCollection()
     self.pieces = self.piecesInstance.pieceCollection
+    self.Game = Game()
 
   def view(self, view):
     return self.viewCollection[view]()

@@ -22,6 +22,15 @@ class PieceCollection(metaclass=Singleton):
       if self.table[square][PIECENAME]:
         pieceCollection.append(Piece(*self.parseTable(self.table[square][PIECENAME], self.table[square][COLOR]), square, self.table[square][POSITION], self.table[square][PIECENAME]))
     return pieceCollection
+  
+  def delete(self, piece):
+    self.pieceCollection.remove(piece)
+    del piece
+
+  def update(self, square):
+    if any((remove_piece := piece) for piece in self.pieceCollection if piece.square == square):
+      self.delete(remove_piece)
+    
 
  
 

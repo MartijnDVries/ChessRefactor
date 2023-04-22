@@ -1,8 +1,6 @@
 from Singleton import Singleton
 from config import *
-import copy
 import ujson
-import json
 
 class SquareTable(metaclass=Singleton):
   """Create a Table of the squares of the board which contain information about the status of the board at any given moment"""
@@ -107,14 +105,41 @@ class SquareTable(metaclass=Singleton):
     table[square][COLOR] = ""
     table[square][PIECENAME] = ""
 
-  def setMove(self, old_square, new_square):
-    self.squareTable[new_square][COLOR] = self.squareTable[old_square][COLOR]
-    self.squareTable[new_square][PIECENAME] = self.squareTable[old_square][PIECENAME]
-    self.emptySquare(old_square)
+  def setEnpassantMove(self, enemy_pawn_square, new_square, old_square, table=""):
+    if not table:
+      table = self.squareTable
+    table[new_square][COLOR] = table[old_square][COLOR]
+    table[new_square][PIECENAME] = table[old_square][PIECENAME]
+    self.emptySquare(old_square, table)
+    self.emptySquare(enemy_pawn_square, table)
 
-  def emptySquare(self, square):
-    self.squareTable[square][COLOR] = ""
-    self.squareTable[square][PIECENAME] = ""
+  def setMove(self, old_square, new_square, table=""):
+    if not table:
+      table = self.squareTable
+    table[new_square][COLOR] = table[old_square][COLOR]
+    table[new_square][PIECENAME] = table[old_square][PIECENAME]
+    self.emptySquare(old_square, table)
+
+  def emptySquare(self, square, table=""):
+    if not table:
+      table = self.squareTable
+    table[square][COLOR] = ""
+    table[square][PIECENAME] = ""
+
+
+  def hasPiece(self, square, piece="", table=None):
+    if not table:
+      table = self.squareTable
+    if piece:
+      return table[square][PIECENAME] == piece
+    else:
+      return table[square][PIECENAME] != ""
+
+  def hasColor(self, square, color, table=""):
+    if not table:
+      table = self.squareTable
+    return table[square][COLOR] == color
+    
 
   def print(self, square):
     print(self.getRow(square))

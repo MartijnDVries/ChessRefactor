@@ -26,6 +26,18 @@ def is_inside_board(pos):
  
 def filter_none(squares):
    return list(filter(lambda square: square is not None, squares))
+
+def get_enemy_color(color):
+   if color == "WHITE":
+      return "BLACK"
+   else:
+      return "WHITE"
+   
+def file_distance(square, new_square):
+   files = "abcdefgh"
+   square_file = files.index(square[0])
+   new_square_file = files.index(new_square[0])
+   return abs(new_square_file - square_file)
   
 
 #COLORS
