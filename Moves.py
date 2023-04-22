@@ -10,16 +10,42 @@ class LegalMoves(metaclass=Singleton):
         self.check = CheckForChecks()
         self.table = SquareTable()
         self.get = GetSquares()
-        self.moves = self.moves_list(self.table.squareTable, "WHITE")
+        self.white_kingcastle_rights = True
+        self.white_queencastle_rights = True
+        self.black_kingcastle_rights = True
+        self.black_queencastle_rights = True
+        self.moves = []
         
-    def is_legal(self, old_square, new_square, piece_name, castling=False):
-        move = f"{old_square}:{new_square}"
+    def is_legal(self, move, piece_name):
+        print("move in is legal", move)
         if move in self.moves:
             self.set_last_move(piece_name, move)
+            if piece_name == "KING" or piece_name == "ROOK":
+                old_square = move[:2]
+                self.set_castling_rights(old_square, piece_name)
             return True
 
     def set_last_move(self, piece_name, move):
         self.last_move = {'piece': piece_name, 'move': move}
+
+    def set_castling_rights(self, old_square, piece_name):
+        if piece_name == "ROOK":
+            if old_square == 'h1':
+                self.white_kingcastle_rights = False
+            if old_square == 'a1':
+                self.white_kingcastle_rights = False
+            if old_square == 'h8':
+                self.black_kingcastle_rights = False
+            if old_square == 'a8':
+                self.black_queencastle_rights = False
+        elif piece_name == "KING":
+            if old_square == 'e1':
+                self.white_kingcastle_rights = False
+                self.white_queencastle_rights = False
+            if old_square == 'e8':
+                self.black_kingcastle_rights = False
+                self.black_queencastle_rights = False
+        
         
     def copy(self, table):
         return ujson.loads(ujson.dumps(table))
@@ -29,13 +55,16 @@ class LegalMoves(metaclass=Singleton):
         self.table.setMove(piece_square, square, table_copy)
         if not(self.check.is_in_check(own_color, table_copy)):
             return f"{piece_square}:{square}"
-        return ""
+        return None
 
     def moves_list(self, table, own_color):
         moves_list = []
 
         # En passant moves
         moves_list.extend(self.check_en_passant(table, own_color))
+
+        # Castling
+        moves_list.extend(self.check_castling(table, own_color))
 
         for square in table:
             if not self.table.hasColor(square, own_color, table):
@@ -72,9 +101,8 @@ class LegalMoves(metaclass=Singleton):
             elif self.table.hasPiece(square, "KING", table):
                 squares = self.get.king_squares(square)
                 moves_list.extend(self.king_moves(table, square, squares, own_color))
-
-                
-        return moves_list
+       
+        self.moves = filter_none(moves_list)
 
     def piece_moves(self, table, piece_square, squares, own_color):
         moves = []
@@ -83,10 +111,10 @@ class LegalMoves(metaclass=Singleton):
             if self.table.hasColor(square, own_color, table):
                 return moves
             if self.table.hasColor(square, enemy_color, table):
-                moves.extend(self.add_move(table, piece_square, square, own_color))
+                moves.append(self.add_move(table, piece_square, square, own_color))
                 return moves
             elif not self.table.hasPiece(square, table):
-                moves.extend(self.add_move(table, piece_square, square, own_color))
+                moves.append(self.add_move(table, piece_square, square, own_color))
         return moves
     
     def king_moves(self, table, king_square, squares, own_color):
@@ -96,9 +124,9 @@ class LegalMoves(metaclass=Singleton):
             if self.table.hasColor(square, own_color, table):
                 continue
             if self.table.hasColor(square, enemy_color, table):
-                moves.extend(self.add_move(table, king_square, square, own_color))
+                moves.append(self.add_move(table, king_square, square, own_color))
             if not self.table.hasPiece(square, table=table):
-                moves.extend(self.add_move(table, king_square, square, own_color))
+                moves.append(self.add_move(table, king_square, square, own_color))
         return moves
     
     def knight_moves(self, table, piece_square, squares, own_color):
@@ -108,17 +136,9 @@ class LegalMoves(metaclass=Singleton):
             if self.table.hasColor(square, own_color, table):
                 continue
             if self.table.hasColor(square, enemy_color, table):
-                table_copy = self.copy(table)
-                self.table.setMove(piece_square, square, table_copy)
-                if not(self.check.is_in_check(own_color, table_copy)):
-                    move = f"{piece_square}:{square}"
-                    moves.append(move)
+                moves.append(self.add_move(table, piece_square, square, own_color))
             if not self.table.hasPiece(square, table=table):
-                table_copy = self.copy(table)
-                self.table.setMove(piece_square, square, table_copy)
-                if not(self.check.is_in_check(own_color, table_copy)):
-                    move = f"{piece_square}:{square}"
-                    moves.append(move)
+                moves.append(self.add_move(table, piece_square, square, own_color))
         return moves
                                 
     def pawn_moves(self, table, pawn_square, squares, own_color):
@@ -127,11 +147,7 @@ class LegalMoves(metaclass=Singleton):
             if self.table.hasPiece(square, table=table):
                 return moves
             else:
-                table_copy = self.copy(table)
-                self.table.setMove(pawn_square, square, table_copy)
-                if not(self.check.is_in_check(own_color, table_copy)):
-                    move = f"{pawn_square}:{square}"
-                    moves.append(move)
+                moves.append(self.add_move(table, pawn_square, square, own_color))
         return moves
 
 
@@ -140,11 +156,7 @@ class LegalMoves(metaclass=Singleton):
         enemy_color = get_enemy_color(own_color)
         for square in squares:
             if self.table.hasColor(square, enemy_color, table):
-                table_copy = self.copy(table)
-                self.table.setMove(pawn_square, square, table_copy)
-                if not(self.check.is_in_check(own_color, table_copy)):
-                    move = f"{pawn_square}:{square}"
-                    moves.append(move)        
+                moves.append(self.add_move(table, pawn_square, square, own_color))
         return moves
         
                 
@@ -205,6 +217,27 @@ class LegalMoves(metaclass=Singleton):
             pass
       
         return moves
+
+    def check_castling(self, table, own_color):
+        moves = []
+        if self.check.is_in_check(own_color, table):
+            return moves
+        if own_color == "WHITE":
+            if self.white_kingcastle_rights:
+                if not self.table.hasPiece('f1') and not self.table.hasPiece('g1'):
+                    moves.append("O-O")
+            if self.white_queencastle_rights:
+                if not self.table.hasPiece('d1') and not self.table.hasPiece('c1') and not self.table.hasPiece('b1'):
+                    moves.append("O-O-O")
+        elif own_color == "BLACK":
+            if self.black_kingcastle_rights:
+                if not self.table.hasPiece('f8') and not self.table.hasPiece('g8'):
+                    moves.append("O-O")
+            if self.black_queencastle_rights:
+                if not self.table.hasPiece('d8') and not self.table.hasPiece('c8') and not self.table.hasPiece('b8'):
+                    moves.append("O-O-O")
+        return moves
+        
             
         
     
@@ -214,9 +247,11 @@ if __name__ == "__main__":
     s = SquareTable()
     s_list = s.getTable()
 
-    # moves = []
+    
+
+    # moves = ['e3:e1']
     # move = ""
     # move2 = ""
-    # moves.extend(move)
-    # moves.extend(move2)
+    # moves.append(move)
+    # moves.append(move2)
     # print(moves)

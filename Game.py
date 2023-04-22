@@ -9,9 +9,10 @@ class Game(metaclass=Singleton):
         self.tableClass = SquareTable()
         self.table = self.tableClass.getTable()
         self.turn = "WHITE"
+        self.create_moves_for(self.turn)
 
     def create_moves_for(self, color):
-        self.legalMoves.moves = self.legalMoves.moves_list(self.table, color)
+        self.legalMoves.moves_list(self.table, color)
 
     def setTurn(self):
         if self.turn == "WHITE":
