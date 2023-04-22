@@ -50,6 +50,8 @@ def row_distance(square, new_square):
     old_row = int(square[1])
     new_row = int(square[1])
     return abs(new_row - old_row)
+
+
 # COLORS
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
