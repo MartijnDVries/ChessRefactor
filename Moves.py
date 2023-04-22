@@ -62,10 +62,8 @@ class LegalMoves(metaclass=Singleton):
 
         # En passant moves
         moves_list.extend(self.check_en_passant(table, own_color))
-
         # Castling
         moves_list.extend(self.check_castling(table, own_color))
-
         for square in table:
             if not self.table.hasColor(square, own_color, table):
                 continue
