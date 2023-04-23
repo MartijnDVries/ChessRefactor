@@ -9,8 +9,7 @@ class App:
         self.board = ChessBoard()
 
     def run(self, view='game'):
-        self.Renderer.setWindow(250, 0)
-        self.Renderer.setScreen(1000, 700)
+        self.Renderer.setWindow(175, 0)
         self.Renderer.setBackground(RED)
         self.boardColor(black=(120, 17, 17))
         self.Renderer.render(view)

@@ -15,7 +15,7 @@ class EventChecker:
         self.tableClass = SquareTable()
         self.table = self.tableClass.squareTable
         self.move = LegalMoves()
-        self.Game = Game()
+        self.Game = Game()  
 
     def loadEvents(self, view, event):
         return self.eventCollection[view](event)
@@ -103,5 +103,5 @@ class EventChecker:
         self.mouseUpEventGame(event)
         self.mouseMoveEventGame(event)
 
-    def main_menu(self):
+    def main_menu(self, event):
         pass

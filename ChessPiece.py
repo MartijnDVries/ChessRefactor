@@ -2,6 +2,7 @@ import pygame
 from config import *
 
 
+
 class Piece(pygame.sprite.Sprite):
 
   def __init__(self, image_file, color, square, position, name):

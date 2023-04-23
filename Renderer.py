@@ -12,7 +12,7 @@ class Render:
         pygame.init()
         self.events = None
         self.view = None
-        self.display = pygame.display.set_mode((1, 1))
+        self.display = pygame.display.set_mode((1000, 700))
         self.background_image = None
         self.background_color = None
         self.Viewer = Viewer(self.display)
@@ -23,8 +23,7 @@ class Render:
     def setWindow(self, x, y, hwnd=None):
         if hwnd is None:
             hwnd = pygame.display.get_wm_info()["window"]
-        windll.user32.SetWindowPos(
-            hwnd, 0, x, y, 0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER)
+        windll.user32.SetWindowPos(hwnd, 0, x, y, 0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER)
 
     def loadView(self, view):
         self.Viewer.view(view)
@@ -50,8 +49,7 @@ class Render:
     def renderBackground(self):
         self.display.fill(self.background_color)
         if self.background_image:
-            self.display.blit(self.background_image.image,
-                              self.background_image.rect)
+            self.display.blit(self.background_image.image, self.background_image.rect)
             return
 
     def removeBgImage(self):
