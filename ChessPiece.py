@@ -1,6 +1,7 @@
 import pygame
 from config import *
-
+from pathlib import Path as path
+from Image import Image
 
 
 class Piece(pygame.sprite.Sprite):
@@ -10,8 +11,8 @@ class Piece(pygame.sprite.Sprite):
     self.name = name
     self.color = color
     self.square = square
-    self.image = pygame.image.load(IMGPATH + image_file + ".png")
-    self.rect = self.image.get_rect()
+    self.image = Image(image_file)
+    self.rect = self.image.rect
     self.rect.center = position
     self.original_position = position
     self.active = False
@@ -41,7 +42,7 @@ class Piece(pygame.sprite.Sprite):
     self.rect.center = self.original_position
     
   def draw(self, surface):
-    surface.blit(self.image, self.rect)
+    surface.blit(self.image.image, self.rect)
 
 
 

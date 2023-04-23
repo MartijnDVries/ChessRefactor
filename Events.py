@@ -4,6 +4,7 @@ from PieceCollection import PieceCollection
 from Moves import LegalMoves
 from SquareTable import SquareTable
 from Game import Game
+from MainMenu import MainMenu
 
 
 class EventChecker:
@@ -18,7 +19,7 @@ class EventChecker:
         self.Game = Game()  
 
     def loadEvents(self, view, event):
-        return self.eventCollection[view](event)
+        self.eventCollection[view](event)
 
     def mouseDownEventGame(self, event):
         pos = pygame.mouse.get_pos()
@@ -102,6 +103,7 @@ class EventChecker:
         self.mouseDownEventGame(event)
         self.mouseUpEventGame(event)
         self.mouseMoveEventGame(event)
+
 
     def main_menu(self, event):
         pass

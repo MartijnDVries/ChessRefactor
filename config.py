@@ -1,7 +1,9 @@
-import os
+from pathlib import Path as path
 
-CURRENTDIR = os.getcwd()
-IMGPATH = CURRENTDIR + '\\Images\\'
+
+CURRENTDIR = path.cwd()
+IMGPATH = CURRENTDIR.joinpath('Images')
+
 
 # Board values
 SQUAREWIDTH = 74

@@ -8,11 +8,11 @@ class App:
         self.Renderer = Render()
         self.board = ChessBoard()
 
-    def run(self, view='game'):
+    def run(self):
         self.Renderer.setWindow(175, 0)
         self.Renderer.setBackground(RED)
         self.boardColor(black=(120, 17, 17))
-        self.Renderer.render(view)
+        self.Renderer.render()
 
     def boardColor(self, white=WHITE, black=BLACK):
         self.board.setSquareColor(white, black)

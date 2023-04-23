@@ -7,16 +7,27 @@ from MainMenu import MainMenu
 class Viewer:
   def __init__(self, surface):
     self.surface = surface
-    self.viewCollection = {'game': self.game, 'main_menu': self.main_menu}
     self.board = ChessBoard()
     self.piecesInstance = PieceCollection()
     self.pieces = self.piecesInstance.pieceCollection
     self.Game = Game()
-    width, height = self.surface.get_width(), self.surface.get_height()
-    self.main_mnu = MainMenu(0, 0, width, height, WHITE, 'bg-image.jpg')
 
-  def view(self, view):
-    return self.viewCollection[view]()
+  def get_view(self):
+    if self.Game.quit:
+      return 'main_menu'
+    else:
+      return 'game'
+
+  def view(self, view, surface):
+    self.surface = surface
+    if view == "main_menu":
+      if not hasattr(self, 'main_mnu'):
+        width, height = self.surface.get_width(), self.surface.get_height()
+        self.main_mnu = MainMenu(0, 0, width, height, WHITE, 'bg-image.jpg')
+        print("getting main menu view")
+      self.main_menu()
+    else:
+      self.game()
     
   def main_menu(self):
     self.main_mnu.draw(self.surface)

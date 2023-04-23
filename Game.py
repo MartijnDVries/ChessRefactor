@@ -11,6 +11,8 @@ class Game(metaclass=Singleton):
         self.turn = "WHITE"
         self.create_moves_for(self.turn)
         self.move = 0
+        self.quit = False
+        self.start = True
 
     def create_moves_for(self, color):
         self.legalMoves.moves_list(self.table, color)
@@ -25,6 +27,7 @@ class Game(metaclass=Singleton):
         self.setTurn()
         self.create_moves_for(self.turn)
         print(self.legalMoves.moves)
+        self.quit = True
 
     def fifty_move_rule(self):
         pass

@@ -1,9 +1,10 @@
 import pygame
-from Background import BackGroundImage
+from Image import Image
 from config import *
 from Views import Viewer
 from Events import EventChecker
 from ctypes import windll
+from Game import Game
 
 
 class Render:
@@ -18,6 +19,7 @@ class Render:
         self.Viewer = Viewer(self.display)
         self.Events = EventChecker()
         self.clock = pygame.time.Clock()
+        self.Game = Game()
         self.run = True
 
     def setWindow(self, x, y, hwnd=None):
@@ -26,11 +28,11 @@ class Render:
         windll.user32.SetWindowPos(hwnd, 0, x, y, 0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER)
 
     def loadView(self, view):
-        self.Viewer.view(view)
+        self.Viewer.view(view, self.display)
 
     def updateView(self, view):
         self.renderBackground()
-        self.Viewer.view(view)
+        self.Viewer.view(view, self.display)
 
     def eventLoader(self, view, event):
         """Load the events of the corresponding view"""
@@ -44,7 +46,7 @@ class Render:
         """Set background color or image"""
         self.background_color = color
         if image:
-            self.background_image = BackGroundImage(image, [0, 0])
+            self.background_image = Image(image, [0, 0])
 
     def renderBackground(self):
         self.display.fill(self.background_color)
@@ -56,15 +58,16 @@ class Render:
         """Set background image to None"""
         self.background_image = None
 
-    def render(self, view):
-        self.loadView(view)
+    def render(self):
         while self.run:
+            view = self.Viewer.get_view()
             self.clock.tick(60)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.run = False
                 self.eventLoader(view, event)
             self.updateView(view)
+            
             pygame.display.flip()
 
 
@@ -72,4 +75,4 @@ if __name__ == "__main__":
     r = Render()
     r.setScreen(1000, 700)
     r.setBackground(RED)
-    r.render('game')
+    r.render()
