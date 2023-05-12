@@ -7,8 +7,8 @@ class ChessBoard(metaclass=Singleton):
   def __init__(self):
     self.rows = 8
     self.columns = 8
-    self.start_X = 100
-    self.start_Y = -20
+    self.start_X = BOARDLEFT
+    self.start_Y = BOARDBOTTOM
     self.board = []
     self.COLOR = 0
     self.RECT = 1
@@ -20,7 +20,7 @@ class ChessBoard(metaclass=Singleton):
     self.board = []
     y = self.start_Y
     for row in range(self.rows):
-      y += SQUAREHEIGHT
+      y -= SQUAREHEIGHT
       x = self.start_X
       if is_even(row):
         for col in range(self.columns):
@@ -48,7 +48,7 @@ class ChessBoard(metaclass=Singleton):
 
   def setPosition(self, left, top):
     self.start_X = left
-    self.start_Y = top - 74
+    self.start_Y = top - SQUAREHEIGHT
     self.loadBoard()
 
   def setSquareColor(self, white=WHITE, black=BLACK):

@@ -73,6 +73,7 @@ if __name__ == "__main__":
     check = CheckForChecks()
     s = SquareTable()
     s_list = s.squareTable
+    print(s.squareTable)
     # s.setMove('h8', 'h5')
     # s.setMove('e1', 'e5')
     print(check.is_in_check("WHITE", s_list))

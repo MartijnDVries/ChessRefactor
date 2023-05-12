@@ -24,7 +24,6 @@ class Viewer:
       if not hasattr(self, 'main_mnu'):
         width, height = self.surface.get_width(), self.surface.get_height()
         self.main_mnu = MainMenu(0, 0, width, height, WHITE, 'bg-image.jpg')
-        print("getting main menu view")
       self.main_menu()
     else:
       self.game()

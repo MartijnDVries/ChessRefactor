@@ -1,20 +1,25 @@
 from config import *
 from ChessPiece import Piece
 from Singleton import Singleton
-from SquareTable import SquareTable
-
+from start_position import StartPos
+from Coordinates import Coordinates
 
 class PieceCollection(metaclass=Singleton):
+
+
     def __init__(self):
-        self.tableClass = SquareTable()
-        self.table = self.tableClass.squareTable
+        self.table = StartPos().startpos
+        self.piece_coordinates = Coordinates().piece_coordinates
+        print(self.piece_coordinates)
         self.pieceCollection = self.getCollection()
 
-    def parseTable(self, piece, color):
-        piece = piece.lower()
-        color = color.lower()
-        image_file = f"{color}_{piece}"
-        return image_file, color.upper()
+    def parseImageFile(self, piece, color):
+        image_file = f"{color.lower()}_{piece.lower()}"
+        return image_file
+    
+    def getPosition(self, square):
+        return self.piece_coordinates[square]
+
 
     def getCollection(self):
         pieceCollection = []
@@ -22,16 +27,17 @@ class PieceCollection(metaclass=Singleton):
             if self.table[square][PIECENAME]:
                 pieceCollection.append(
                     Piece(
-                    *self.parseTable(self.table[square][PIECENAME], self.table[square][COLOR]),
-                    square, self.table[square][POSITION], 
-                    self.table[square][PIECENAME]))
+                    self.parseImageFile(self.table[square][PIECENAME], self.table[square][COLOR]),
+                    self.table[square][COLOR],
+                    square, 
+                    self.getPosition(square),
+                    self.table[square][PIECENAME])
+                    )
         return pieceCollection
     
-
     def getPiece(self, square):
         if any((get_piece := piece) for piece in self.pieceCollection if piece.square == square):
             return get_piece
-
 
     def delete(self, piece):
         self.pieceCollection.remove(piece)

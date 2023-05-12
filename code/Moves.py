@@ -62,11 +62,15 @@ class LegalMoves(metaclass=Singleton):
 
         # En passant moves
         moves_list.extend(self.check_en_passant(table, own_color))
+
         # Castling
         moves_list.extend(self.check_castling(table, own_color))
+
         for square in table:
-            if not self.table.hasColor(square, own_color, table):
+            
+            if not self.table.hasColor(square, own_color, table) or not self.table.hasPiece(square, table=table):
                 continue
+
             if self.table.hasPiece(square, "ROOK", table):
                 for dir in ["right", "left"]:
                     squares = self.get.horizontal_squares_from(square, dir)
@@ -74,18 +78,22 @@ class LegalMoves(metaclass=Singleton):
                 for dir in ["up", "down"]:
                     squares = self.get.vertical_squares_from(square, dir)
                     moves_list.extend(self.piece_moves(table, square, squares, own_color))
+
             elif self.table.hasPiece(square, "PAWN", table):
                 squares = self.get.pawn_move_squares_from(square, own_color)
                 moves_list.extend(self.pawn_moves(table, square, squares, own_color))
                 squares = self.get.pawn_capture_squares_from(square, own_color)
                 moves_list.extend(self.pawn_captures(table, square, squares, own_color))
+
             elif self.table.hasPiece(square, "BISHOP", table):
                 for dir in ["right_up", "right_down", "left_up", "left_down"]:
                     squares = self.get.diagonal_squares_from(square, dir)
                     moves_list.extend(self.piece_moves(table, square, squares, own_color))
+
             elif self.table.hasPiece(square, "KNIGHT", table):
                 squares = self.get.knight_squares_from(square)
                 moves_list.extend(self.knight_moves(table, square, squares, own_color))
+
             elif self.table.hasPiece(square, "QUEEN", table):
                 for dir in ["right_up", "right_down", "left_up", "left_down"]:
                     squares = self.get.diagonal_squares_from(square, dir)
@@ -96,6 +104,7 @@ class LegalMoves(metaclass=Singleton):
                 for dir in ["up", "down"]:
                     squares = self.get.vertical_squares_from(square, dir)
                     moves_list.extend(self.piece_moves(table, square, squares, own_color))
+
             elif self.table.hasPiece(square, "KING", table):
                 squares = self.get.king_squares(square)
                 moves_list.extend(self.king_moves(table, square, squares, own_color))
@@ -246,10 +255,3 @@ if __name__ == "__main__":
     s_list = s.getTable()
 
     
-
-    # moves = ['e3:e1']
-    # move = ""
-    # move2 = ""
-    # moves.append(move)
-    # moves.append(move2)
-    # print(moves)

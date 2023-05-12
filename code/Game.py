@@ -26,8 +26,6 @@ class Game(metaclass=Singleton):
     def check_game_outcome(self):
         self.setTurn()
         self.create_moves_for(self.turn)
-        print(self.legalMoves.moves)
-        self.quit = True
 
     def fifty_move_rule(self):
         pass

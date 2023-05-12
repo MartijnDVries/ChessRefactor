@@ -3,6 +3,7 @@ from config import *
 from PieceCollection import PieceCollection
 from Moves import LegalMoves
 from SquareTable import SquareTable
+from Coordinates import Coordinates
 from Game import Game
 from MainMenu import MainMenu
 
@@ -14,6 +15,7 @@ class EventChecker:
         self.pieceCollection = PieceCollection()
         self.pieces = self.pieceCollection.pieceCollection
         self.tableClass = SquareTable()
+        self.coordinates = Coordinates().piece_coordinates
         self.table = self.tableClass.squareTable
         self.move = LegalMoves()
         self.Game = Game()  
@@ -55,7 +57,7 @@ class EventChecker:
     def makeMove(self, piece, new_square):
         self.pieceCollection.update(new_square)
         self.tableClass.setMove(piece.square, new_square)
-        new_pos = self.table[new_square][POSITION]
+        new_pos = self.coordinates[new_square]
         piece.update(new_pos, new_square)
         self.Game.check_game_outcome()
 

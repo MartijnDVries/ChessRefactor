@@ -19,6 +19,7 @@ class MainMenu(pygame.Surface):
       if hasattr(self, 'image'):
         surface.blit(self.image.image, self.rect)
         return
+      
       self.fill(self.color)
       surface.blit(self, self.rect)
         
