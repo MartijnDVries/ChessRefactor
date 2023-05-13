@@ -29,5 +29,5 @@ class Compare():
 if __name__ == "__main__":
     c = Compare()
 
-    print(timeit.timeit('c.execMethod1', 'from __main__ import c', number=10000000))
-    print(timeit.timeit('c.execMethod2', 'from __main__ import c', number=10000000))
+    print(timeit.timeit('c.execMethod1', setup='from __main__ import c', number=10000000))
+    print(timeit.timeit('c.execMethod2', setup='from __main__ import c', number=10000000))
