@@ -1,6 +1,7 @@
 from config import *
 from Singleton import Singleton
 from SquareTable import SquareTable
+from SquareTableNumpy import SquareTableNumpy
 from GetSquares import GetSquares
 import timeit
 import ujson
@@ -9,13 +10,13 @@ import ujson
 class CheckForChecks(metaclass=Singleton):
 
     def __init__(self):
-        self.tableClass = SquareTable()
+        self.tableClass = SquareTableNumpy()
         self.get = GetSquares()
 
     def is_in_check(self, own_color, table):
         king_square = self.tableClass.getSquareFromPiece(
             'KING', own_color, table)
-        king_square = king_square[0]
+        # king_square = king_square[0]
 
         for dir in ["left", "right"]:
             squares = self.get.horizontal_squares_from(king_square, dir)
@@ -39,44 +40,48 @@ class CheckForChecks(metaclass=Singleton):
 
     def check_diagonal_check(self, squares, table, own_color):
         for square in squares:
-            if not table[square][PIECENAME]:
+            if not self.tableClass.hasPiece(square, table=table):
                 continue
-            if table[square][COLOR] == own_color:
+            if self.tableClass.hasColor(square, own_color, table):
                 return False
-            if table[square][PIECENAME] == "BISHOP" or table[square][PIECENAME] == "QUEEN":
+            if self.tableClass.hasPiece(square, 'BISHOP', table)\
+                    or self.tableClass.hasPiece(square, 'QUEEN', table):
                 return True
         return False
 
+
     def check_pawn_check(self, squares, table, own_color):
         for square in squares:
-            if table[square][COLOR] != own_color and table[square][PIECENAME] == "PAWN":
+            if not self.tableClass.hasColor(square, own_color, table) \
+                    and self.tableClass.hasPiece(square, 'PAWN', table):
                 return True
         return False
 
     def check_horizontal_and_vertical_check(self, squares, table, own_color):
         for square in squares:
-            if not table[square][PIECENAME]:
+            if not self.tableClass.hasPiece(square, table=table):
                 continue
-            if table[square][COLOR] == own_color:
+            if self.tableClass.hasColor(square, own_color, table):
                 return False
-            if table[square][PIECENAME] == "ROOK" or table[square][PIECENAME] == "QUEEN":
+            if self.tableClass.hasPiece(square, 'ROOK', table)\
+                    or self.tableClass.hasPiece(square, 'QUEEN', table):
                 return True
         return False
 
     def check_knight_check(self, squares, table, own_color):
         for square in squares:
-            if table[square][PIECENAME] == "KNIGHT" and table[square][COLOR] != own_color:
+            if self.tableClass.hasPiece(square, 'KNIGHT', table)\
+                  and not self.tableClass.hasColor(square, own_color, table):
                 return True
 
 
 if __name__ == "__main__":
     check = CheckForChecks()
-    s = SquareTable()
-    s_list = s.squareTable
-    print(s.squareTable)
+    s = SquareTableNumpy()
+    s_list = s.squareTableNumpy
     # s.setMove('h8', 'h5')
     # s.setMove('e1', 'e5')
-    print(check.is_in_check("WHITE", s_list))
+    # print(check.is_in_check("WHITE", s_list))
 
-    # t = timeit.timeit('CheckForChecks().is_in_check("WHITE", s_list)', setup='from __main__ import CheckForChecks, s_list', number=100000)
-    # print(t)
+    t = timeit.timeit('check.is_in_check("WHITE", s_list)', setup='from __main__ import check, s_list', number=100000)
+    print(t)

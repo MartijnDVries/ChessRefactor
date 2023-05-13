@@ -4,13 +4,15 @@ import ujson
 from start_position import StartPos
 from Coordinates import Coordinates
 import timeit
+import numpy as np
 
 class SquareTable(metaclass=Singleton):
     """Create a Table of the squares of the board which contain information about the status of the board at any given moment"""
 
     def __init__(self):
         self.squareTable = StartPos().startpos
-        self.coordinates = Coordinates().piece_coordinates
+        self.squareTableNumpy = StartPos().startposNumpy
+        self.coordinates = Coordinates().coordinates
         
     def __str__(self):
         for k, v in self.__dict__.items():
@@ -118,12 +120,18 @@ class SquareTable(metaclass=Singleton):
         for square, values in table.items():
             print(f"{square}: {values[1:]}")
 
-    @staticmethod
-    def copy(table):
+
+    def copyTable(self, table):
         return ujson.loads(ujson.dumps(table))
+    
+
+    def copyNumpyTable(self, array):
+        return np.copy(array)
 
 
 if __name__ == "__main__":
     s = SquareTable()
 
-    print(timeit.timeit('s.copy(s.squareTable)', 'from __main__ import s', number=1000000))
+    print(timeit.timeit('s.copyTable(s.squareTable)', 'from __main__ import s', number=100000))
+
+    print(timeit.timeit('s.copyNumpyTable(s.squareTableNumpy)', 'from __main__ import s', number=100000))

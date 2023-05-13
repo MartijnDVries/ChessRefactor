@@ -3,7 +3,7 @@ from config import *
 class Coordinates:
      
     def __init__(self):
-        self.piece_coordinates = self.getPieceCoordinates()
+        self.coordinates = self.getPieceCoordinates()
 
     def getPieceCoordinates(self):
         """Center X, Y for all squares attached to squarename"""
@@ -19,6 +19,17 @@ class Coordinates:
                 square = col + str(row)
                 coordinates[square] = (x, y)
         return coordinates
+    
+    def getSquareFromCoordinates(self, pos):
+        pos_x = pos[0]
+        pos_y = pos[1]
+
+        index = list(filter(lambda square: self.coordinates[square][X] 
+            in range( pos_x - (SQUAREWIDTH // 2), pos_x + (SQUAREWIDTH // 2))
+            and self.coordinates[square][Y] in range(pos_y - (SQUAREHEIGHT // 2), pos_y + ((SQUAREHEIGHT // 2))), 
+            self.coordinates))
+        
+        return index[0]
     
 
 if __name__ == "__main__":

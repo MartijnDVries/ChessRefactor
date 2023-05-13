@@ -1,14 +1,17 @@
 from config import *
 from SquareTable import SquareTable
 from Singleton import Singleton
-
+import timeit
 
 class GetSquares(metaclass=Singleton):
+
+
     def __init__(self) -> None:
         self.tableClass = SquareTable()
         self.table = self.tableClass.getTable()
         self.numbers = [row for row in range(1, 9)]
         self.files = 'abcdefgh'
+
 
     def getNewSquare(self, square, add_file, add_square_number):
         file_index = self.files.index(str(square[0]))
@@ -25,6 +28,7 @@ class GetSquares(metaclass=Singleton):
 
         return f"{self.files[new_file_index]}{self.numbers[new_square_number_index]}"
 
+
     def king_squares(self, square):
         squares = []
         squares.append(self.getNewSquare(square, 1, 1))
@@ -37,6 +41,7 @@ class GetSquares(metaclass=Singleton):
         squares.append(self.getNewSquare(square, 0, -1))
         return filter_none(squares)
 
+
     def knight_squares_from(self, square):
         squares = []
         squares.append(self.getNewSquare(square, 1, 2))
@@ -48,6 +53,7 @@ class GetSquares(metaclass=Singleton):
         squares.append(self.getNewSquare(square, -2, 1))
         squares.append(self.getNewSquare(square, -2, -1))
         return filter_none(squares)
+
 
     def diagonal_squares_from(self, square, direction):
         squares = []
@@ -80,6 +86,7 @@ class GetSquares(metaclass=Singleton):
                 squares.append(left_down_new_square)
             return filter_none(squares)
 
+
     def horizontal_squares_from(self, square, direction):
         squares = []
         if direction == "right":
@@ -94,6 +101,7 @@ class GetSquares(metaclass=Singleton):
                 left_new_square = self.getNewSquare(left_new_square, -1, 0)
                 squares.append(left_new_square)
             return filter_none(squares)
+
 
     def vertical_squares_from(self, square, directon):
         squares = []
@@ -110,6 +118,7 @@ class GetSquares(metaclass=Singleton):
                 squares.append(down_new_square)
             return filter_none(squares)
 
+
     def pawn_capture_squares_from(self, square, own_color):
         squares = []
         if own_color == "WHITE":
@@ -120,6 +129,7 @@ class GetSquares(metaclass=Singleton):
             squares.append(self.getNewSquare(square, 1, -1))
             squares.append(self.getNewSquare(square, -1, -1))
             return filter_none(squares)
+
 
     def pawn_move_squares_from(self, square, own_color):
         squares = []
