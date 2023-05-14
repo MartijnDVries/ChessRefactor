@@ -132,6 +132,8 @@ class SquareTable(metaclass=Singleton):
 if __name__ == "__main__":
     s = SquareTable()
 
-    print(timeit.timeit('s.copyTable(s.squareTable)', 'from __main__ import s', number=100000))
+    # print(timeit.timeit('s.copyTable(s.squareTable)', 'from __main__ import s', number=100000))
 
-    print(timeit.timeit('s.copyNumpyTable(s.squareTableNumpy)', 'from __main__ import s', number=100000))
+    # print(timeit.timeit('s.copyNumpyTable(s.squareTableNumpy)', 'from __main__ import s', number=100000))
+
+    print(s.squareTable)

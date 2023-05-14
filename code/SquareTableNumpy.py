@@ -28,11 +28,11 @@ class SquareTableNumpy(metaclass=Singleton):
         return self.squareTableNumpy
 
 
-    def getRow(self, square):
-        square_index = self.getSquareIndex(square)
+    def getRow(self, square_index):
+
 
         return f'\n\
-        SQUARE: {square}\n\
+        SQUARE: {self.getSquareFromIndex(square_index)}\n\
         COLOR: {self.squareTableNumpy[square_index][COLOR]}\n\
         PIECE: {self.squareTableNumpy[square_index][PIECENAME]}\n'
 
@@ -63,7 +63,7 @@ class SquareTableNumpy(metaclass=Singleton):
         for square in table:
             if square[PIECENAME] == piece_name.upper() \
                     and square[COLOR] == piece_color.upper():
-                return self.getSquareFromIndex(index)
+                return index
             index += 1
         return "Piece not found"
         
@@ -81,17 +81,15 @@ class SquareTableNumpy(metaclass=Singleton):
     #     table[square][COLOR] = ""
     #     table[square][PIECENAME] = ""
 
-    def setEnpassantMove(self, enemy_pawn_square, new_square, old_square, table=None):
-        new_square_index = self.getSquareIndex(new_square)
-        old_square_index = self.getSquareIndex(old_square)
+    def setEnpassantMove(self, enemy_pawn_square_index, new_square_index, old_square_index, table=None):
 
         if not isinstance(table, np.ndarray):
             table = self.squareTableNumpy
 
         table[new_square_index][COLOR] = table[old_square_index][COLOR]
         table[new_square_index][PIECENAME] = table[old_square_index][PIECENAME]
-        self.emptySquare(old_square, table)
-        self.emptySquare(enemy_pawn_square, table)
+        self.emptySquare(old_square_index, table)
+        self.emptySquare(enemy_pawn_square_index, table)
 
 
     def castle(self, color, side, table=None):
@@ -101,35 +99,30 @@ class SquareTableNumpy(metaclass=Singleton):
 
         if color == "WHITE":
           if side == "king_side":
-              self.setMove('e1', 'g1', table)
-              self.setMove('h1', 'f1', table)
+              self.setMove(E1, G1, table)
+              self.setMove(H1, F1, table)
           elif side == "queen_side":
-              self.setMove('e1', 'c1', table)
-              self.setMove('a1', 'd1', table)
+              self.setMove(E1, C1, table)
+              self.setMove(A1, D1, table)
         elif color == "BLACK":
             if side == "king_side":
-                self.setMove('e8', 'g8', table)
-                self.setMove('h8', 'f8', table)
+                self.setMove(E8, G8, table)
+                self.setMove(H8, F8, table)
             elif side == "queen_side":
-                self.setMove('e8', 'c8', table)
-                self.setMove('a8', 'd8', table)
+                self.setMove(E8, C8, table)
+                self.setMove(A8, D8, table)
 
 
-    def setMove(self, old_square, new_square, table=None):
-        new_square_index = self.getSquareIndex(new_square)
-        old_square_index = self.getSquareIndex(old_square)
+    def setMove(self, old_square_index, new_square_index, table=None):
 
         if not isinstance(table, np.ndarray):
             table = self.squareTableNumpy
 
-        table[new_square_index][COLOR] = table[old_square_index][COLOR]
-        table[new_square_index][PIECENAME] = table[old_square_index][PIECENAME]
         table[new_square_index] = table[old_square_index]
-        self.emptySquare(old_square, table)
+        self.emptySquare(old_square_index, table)
 
 
-    def emptySquare(self, square, table=None):
-        square_index = self.getSquareIndex(square)
+    def emptySquare(self, square_index, table=None):
 
         if not isinstance(table, np.ndarray):
             table = self.squareTableNumpy
@@ -138,21 +131,20 @@ class SquareTableNumpy(metaclass=Singleton):
         table[square_index][PIECENAME] = ""
 
 
-    def hasPiece(self, square, piece=None, table=None):
-        square_index = self.getSquareIndex(square)
+    def hasPiece(self, square_index, piece=None, table=None):
         if not isinstance(table, np.ndarray):
             table = self.squareTableNumpy
         if piece:
             return table[square_index][PIECENAME] == piece
         else:
             return table[square_index][PIECENAME] != ""
-
-
-    def hasColor(self, square, color, table=None):
-        square_index = self.getSquareIndex(square)
+        
+    def hasColor(self, square_index, color, table=None):
         if not isinstance(table, np.ndarray):
             table = self.squareTableNumpy
         return table[square_index][COLOR] == color
+
+
 
 
     def print(self, square):
@@ -178,5 +170,8 @@ if __name__ == "__main__":
     # print(s.getRow('a1'))
     # print(timeit.timeit('s.copy(s.squareTable)', 'from __main__ import s', number=1000000))
 
-    print(s.getSquareFromPiece('KING', 'WHITE'))
+    # print(s.getSquareFromPiece('KING', 'WHITE'))
 
+    s.setMove('e1', 'e5')
+
+    s.printTable()

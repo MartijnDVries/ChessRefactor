@@ -5,7 +5,7 @@ import numpy as np
 import timeit
 
 
-class GetSquares(metaclass=Singleton):
+class GetSquaresNumpy(metaclass=Singleton):
 
 
     def __init__(self) -> None:
@@ -36,46 +36,30 @@ class GetSquares(metaclass=Singleton):
 
 
     def king_squares(self, square):
-        squares = []
-        squares.append(self.getNewSquare(square, 1, 1))
-        squares.append(self.getNewSquare(square, 1, -1))
-        squares.append(self.getNewSquare(square, 1, 0))
-        squares.append(self.getNewSquare(square, -1, 1))
-        squares.append(self.getNewSquare(square, -1, -1))
-        squares.append(self.getNewSquare(square, -1, 0))
-        squares.append(self.getNewSquare(square, 0, 1))
-        squares.append(self.getNewSquare(square, 0, -1))
-        return filter_none(squares)
-    
-
-    def king_squares_numpy(self, square):
         squares = set()
         index =  self.tableClass.getSquareIndex(square)
         if index not in self.leftEdgeSquares:
-            squares.add(int(index - 1))
+            squares.add(int(index - LEFT))
             if index not in self.topEdgeSquares:
-                squares.add(int(index + 7))
+                squares.add(int(index + LEFTUP))
             if index not in self.bottomRowEdgeSquares:
-                squares.add(int(index - 9))
+                squares.add(int(index - LEFTDOWN))
         if index not in self.rightEdgeSquares:
-            squares.add(int(index + 1))
+            squares.add(int(index + RIGHT))
             if index not in self.topEdgeSquares:
-                squares.add(int(index + 9))
+                squares.add(int(index + RIGHTUP))
             if index not in self.bottomRowEdgeSquares:
-                squares.add(int(index - 7))
+                squares.add(int(index - RIGHTDOWN))
         if index not in self.bottomRowEdgeSquares:
-            squares.add(int(index - 8))
+            squares.add(int(index - DOWN))
         if index not in self.topEdgeSquares:
-            squares.add(int(index + 8))
+            squares.add(int(index + UP))
         return squares
         
 
-
-
-
-
     def knight_squares_from(self, square):
         squares = []
+        square = self.tableClass.getSquareFromIndex(square)
         squares.append(self.getNewSquare(square, 1, 2))
         squares.append(self.getNewSquare(square, 1, -2))
         squares.append(self.getNewSquare(square, -1, 2))
@@ -84,110 +68,127 @@ class GetSquares(metaclass=Singleton):
         squares.append(self.getNewSquare(square, 2, -1))
         squares.append(self.getNewSquare(square, -2, 1))
         squares.append(self.getNewSquare(square, -2, -1))
-        return filter_none(squares)
+
+        squares =  filter_none(squares)
+        
+        squares = [self.tableClass.getSquareIndex(square) for square in squares]
+
+        return squares
 
 
     def diagonal_squares_from(self, square, direction):
-        squares = []
         if direction == "right_up":
             right_up_new_square = square
-            while right_up_new_square is not None:
-                right_up_new_square = self.getNewSquare(
-                    right_up_new_square, 1, 1)
-                squares.append(right_up_new_square)
-            return filter_none(squares)
+            while right_up_new_square not in self.topEdgeSquares\
+                    and right_up_new_square not in self.rightEdgeSquares:
+                right_up_new_square += RIGHTUP
+                yield right_up_new_square
         if direction == "right_down":
             right_down_new_square = square
-            while right_down_new_square is not None:
-                right_down_new_square = self.getNewSquare(
-                    right_down_new_square, 1, -1)
-                squares.append(right_down_new_square)
-            return filter_none(squares)
+            while right_down_new_square not in self.bottomRowEdgeSquares\
+                    and right_down_new_square not in self.rightEdgeSquares:
+                right_down_new_square -= RIGHTDOWN
+                yield right_down_new_square
         if direction == "left_up":
             left_up_new_square = square
-            while left_up_new_square is not None:
-                left_up_new_square = self.getNewSquare(
-                    left_up_new_square, -1, 1)
-                squares.append(left_up_new_square)
-            return filter_none(squares)
+            while left_up_new_square not in self.topEdgeSquares\
+                    and left_up_new_square not in self.leftEdgeSquares:
+                left_up_new_square += LEFTUP
+                yield left_up_new_square
         if direction == "left_down":
             left_down_new_square = square
-            while left_down_new_square is not None:
-                left_down_new_square = self.getNewSquare(
-                    left_down_new_square, -1, -1)
-                squares.append(left_down_new_square)
-            return filter_none(squares)
+            while left_down_new_square not in self.bottomRowEdgeSquares\
+                    and left_down_new_square not in self.leftEdgeSquares:
+                left_down_new_square -= LEFTDOWN
+                yield left_down_new_square
 
 
     def horizontal_squares_from(self, square, direction):
-        squares = []
         if direction == "right":
             right_new_square = square
-            while right_new_square is not None:
-                right_new_square = self.getNewSquare(right_new_square, 1, 0)
-                squares.append(right_new_square)
-            return filter_none(squares)
+            while right_new_square not in self.rightEdgeSquares:
+                right_new_square += RIGHT
+                yield right_new_square
         if direction == "left":
             left_new_square = square
-            while left_new_square is not None:
-                left_new_square = self.getNewSquare(left_new_square, -1, 0)
-                squares.append(left_new_square)
-            return filter_none(squares)
+            while left_new_square not in self.leftEdgeSquares:
+                left_new_square -= LEFT
+                yield left_new_square
 
 
     def vertical_squares_from(self, square, directon):
-        squares = []
         if directon == "up":
             up_new_square = square
-            while up_new_square is not None:
-                up_new_square = self.getNewSquare(up_new_square, 0, 1)
-                squares.append(up_new_square)
-            return filter_none(squares)
+            while up_new_square not in self.topEdgeSquares:
+                up_new_square += UP
+                yield up_new_square
         if directon == "down":
             down_new_square = square
-            while down_new_square is not None:
-                down_new_square = self.getNewSquare(down_new_square, 0, -1)
-                squares.append(down_new_square)
-            return filter_none(squares)
+            while down_new_square not in self.bottomRowEdgeSquares:
+                down_new_square -= DOWN
+                yield down_new_square
 
 
     def pawn_capture_squares_from(self, square, own_color):
-        squares = []
+        squares = set()
         if own_color == "WHITE":
-            squares.append(self.getNewSquare(square, 1, 1))
-            squares.append(self.getNewSquare(square, -1, 1))
-            return filter_none(squares)
+            if square not in self.topEdgeSquares:
+                if square not in self.leftEdgeSquares:
+                    squares.add(int(square + LEFTUP))
+                if square not in self.rightEdgeSquares:
+                    squares.add(int(square +  RIGHTUP))
         if own_color == "BLACK":
-            squares.append(self.getNewSquare(square, 1, -1))
-            squares.append(self.getNewSquare(square, -1, -1))
-            return filter_none(squares)
+            if square not in self.bottomRowEdgeSquares:
+                if square not in self.leftEdgeSquares:
+                    squares.add(int(square + LEFTDOWN))
+                if square not in self.rightEdgeSquares:
+                    squares.add(int(square + RIGHTDOWN))
 
+        return squares
 
     def pawn_move_squares_from(self, square, own_color):
         squares = []
         pawn_row = int(square[1])
         if own_color == "WHITE":
-            squares.append(self.getNewSquare(square, 0, 1))
+            squares.append(int(square + UP))
             if pawn_row == 2:
-                squares.append(self.getNewSquare(square, 0, 2))
-            return filter_none(squares)
+                squares.append(int(square + 2 * UP))
+            return squares
         if own_color == "BLACK":
-            squares.append(self.getNewSquare(square, 0, -1))
+            squares.append(int(square - DOWN))
             if pawn_row == 7:
-                squares.append(self.getNewSquare(square, 0, -2))
-            return filter_none(squares)
+                squares.append(int(square - 2 * DOWN))
+            return squares
 
 
 if __name__ == "__main__":
-    get = GetSquares()
+    get = GetSquaresNumpy()
+    s = SquareTableNumpy()
+    # print(get.king_squares('e1'))
+    # print(get.king_squares_numpy('e1'))
 
-    print(get.king_squares('e1'))
-    print(get.king_squares_numpy('e1'))
 
+    def get_squares():
+        return list(get.horizontal_squares_from_2(A1, "left"))
+
+    print(get_squares())
+
+    # def get_squares_2():
+    #     for index in get.horizontal_squares_from_2("e1", "left"):
+    #         square = s.getSquareFromIndex(index)
+    #         print(square)
+
+
+    # print(get_squares())
+    # get_squares_2()
+
+    # print(list(get.horizontal_squares_from_2("e1", "left")))
     # timeit.timeit('GetSquares().king_squares("e1")', setup='from __ main__ import GetSquares', number=10000)
     # timeit.timeit('GetSquares().king_squares_numpy("e1")', setup='from __ main__ import GetSquares', number=10000)
 
 
-    print(timeit.timeit('get.king_squares("e1")', setup='from __main__ import get', number=100000))
+    # print(timeit.timeit('get.horizontal_squares_from("e1", "right")', setup='from __main__ import get', number=1000000))
 
-    print(timeit.timeit('get.king_squares_numpy("e1")', setup='from __main__ import get', number=100000))
+    # print(timeit.timeit('get_squares()', setup='from __main__ import get_squares', number=1000000))
+
+    # print(timeit.timeit('get_squares_2()', setup='from __main__ import get_squares_2', number=1000000))
