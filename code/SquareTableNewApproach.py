@@ -114,7 +114,7 @@ class SquareTableNewApproach(metaclass=Singleton):
 
 
     def setMove(self, old_square_index, new_square_index, table=None):
-
+        print(f"OLD SQI: {old_square_index}, NSQI: {new_square_index}")
         if not isinstance(table, np.ndarray):
             table = self.squareTableNumpy
 
@@ -143,6 +143,9 @@ class SquareTableNewApproach(metaclass=Singleton):
 
     def print(self, square):
         print(self.getRow(square))
+
+
+    
 
 
     def printTable(self, table=None):
