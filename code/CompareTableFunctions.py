@@ -1,6 +1,6 @@
+from SquareTableNewApproach import SquareTableNewApproach
 from SquareTableNumpy import SquareTableNumpy
-from SquareTable import SquareTable
-from CheckForChecks import CheckForChecks
+from CheckForChecksNewApproach import CheckForChecksNewApproach
 from CheckForChecksNumpy import CheckForChecksNumpy
 import timeit
 from config import *
@@ -8,12 +8,12 @@ from config import *
 class Compare():
     
     def __init__(self):
-        self.table = SquareTable()
-        self.numpy_table = SquareTableNumpy()
-        self.check = CheckForChecks()
-        self.numpy_check = CheckForChecksNumpy()
-        self.table_normal = self.table.squareTable
-        self.table_numpy = self.numpy_table.squareTableNumpy
+        self.table = SquareTableNumpy()
+        self.table_new = SquareTableNewApproach()
+        self.check = CheckForChecksNumpy()
+        self.check_new = CheckForChecksNewApproach()
+        self.table = self.table.squareTableNumpy
+        self.table_new = self.table_new.squareTableNumpy
         self.color = 'WHITE'
         self.side = 'king_side'
 
@@ -24,13 +24,12 @@ class Compare():
 
 
     def execMethod1(self):
-        self.check.is_in_check('WHITE', self.table_normal)
-        
+        self.check.is_in_check('WHITE', self.table)
+
     def execMethod2(self):
-        self.numpy_check.is_in_check('WHITE', self.table_numpy)
+        self.check_new.is_in_check('WHITE', self.table_new)
 
         
-
     def compare(self):
         print(f"EXEC METHOD 1 FINSIHED IN: ")
         print(timeit.timeit('Compare().execMethod1()', setup='from __main__ import Compare', number=100000))
