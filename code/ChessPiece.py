@@ -1,6 +1,5 @@
 import pygame
 from config import *
-from pathlib import Path as path
 from Image import Image
 
 

@@ -7,7 +7,7 @@ class ChessBoard(metaclass=Singleton):
   def __init__(self):
     self.rows = 8
     self.columns = 8
-    self.start_X = BOARDLEFT
+    self.start_X = BOARDLEFT - SQUAREWIDTH
     self.start_Y = BOARDBOTTOM
     self.board = []
     self.COLOR = 0
