@@ -1,25 +1,33 @@
+
 import pygame
 from config import *
 from Image import Image
 from Game import Game
-
-class MainMenu(pygame.Surface):
-    def __init__(self, x, y, width, height, color, image_file=None):
-        pygame.Surface.__init__(self, size=(width, height))
-        self.color = color
-        if image_file:
-            self.image = Image(image_file)
-            self.image.image = pygame.transform.scale(self.image.image, (width, height))
-        self.rect = pygame.Rect(x, y, width, height)
+from MainMenuButtons import MainMenuButtons
 
 
+class MainMenu():
+    
+    def __init__(self):
+       self.buttons = MainMenuButtons().buttonCollection
 
+    def set_surface(self,  x, y, width, height):
+       self.rect = pygame.Rect(x, y, width, height)
+       
+    def set_bg_image(self, image_file):
+        self.image = Image(image_file)
+        self.image.image = pygame.transform.scale(self.image.image, (self.rect.width, self.rect.height))
 
+    def set_bg_color(self, color):
+       self.color = color
+             
     def draw(self, surface):
+      surface.fill(self.color)
       if hasattr(self, 'image'):
         surface.blit(self.image.image, self.rect)
-        return
-      
-      self.fill(self.color)
-      surface.blit(self, self.rect)
-        
+      for button in self.buttons.values():
+         button.draw(surface)
+
+    def events(self, event):
+       pass
+    

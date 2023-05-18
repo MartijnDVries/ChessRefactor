@@ -16,31 +16,29 @@ class CheckForChecks(metaclass=Singleton):
         king_square = self.positionHandler.getSquareFromPiece(
             'KING', own_color, position)
 
-
         for dir in ["left", "right"]:
             squares = list(self.get.horizontal_squares_from(king_square, dir))
             if self.check_horizontal_and_vertical_check(squares, position, own_color):
                 return True
-            
+
         for dir in ["up", "down"]:
             squares = list(self.get.vertical_squares_from(king_square, dir))
             if self.check_horizontal_and_vertical_check(squares, position, own_color):
                 return True
-            
+
         for dir in ["right_up", "right_down", "left_up", "left_down"]:
             squares = list(self.get.diagonal_squares_from(king_square, dir))
             if self.check_diagonal_check(squares, position, own_color):
                 return True
-            
+
         squares = self.get.knight_squares_from(king_square)
         if self.check_knight_check(squares, position, own_color):
             return True
-        
+
         squares = self.get.pawn_capture_squares_from(king_square, own_color)
         if self.check_pawn_check(squares, position, own_color):
             return True
         return False
-    
 
     def check_diagonal_check(self, squares, position, own_color):
         for square in squares:
@@ -50,7 +48,6 @@ class CheckForChecks(metaclass=Singleton):
                     or self.positionHandler.hasPiece(square, 'QUEEN', position):
                 return True
         return False
-    
 
     def check_pawn_check(self, squares, position, own_color):
         for square in squares:
@@ -58,7 +55,6 @@ class CheckForChecks(metaclass=Singleton):
                     and self.positionHandler.hasPiece(square, 'PAWN', position):
                 return True
         return False
-
 
     def check_horizontal_and_vertical_check(self, squares, position, own_color):
         for square in squares:
@@ -69,11 +65,10 @@ class CheckForChecks(metaclass=Singleton):
                 return True
         return False
 
-
     def check_knight_check(self, squares, position, own_color):
         for square in squares:
             if self.positionHandler.hasPiece(square, 'KNIGHT', position)\
-                  and not self.positionHandler.hasColor(square, own_color, position):
+                    and not self.positionHandler.hasColor(square, own_color, position):
                 return True
 
 

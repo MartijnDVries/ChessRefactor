@@ -14,11 +14,9 @@ class Game(metaclass=Singleton):
         self.quit = False
         self.start = True
 
-
     def create_moves_for(self, color):
         moves = self.legalMoves.moves_list(self.position,  self.turn)
         print(moves)
-
 
     def setTurn(self):
         if self.turn == "WHITE":
@@ -26,12 +24,9 @@ class Game(metaclass=Singleton):
             return
         self.turn = "WHITE"
 
-
     def check_game_outcome(self):
         self.setTurn()
         self.create_moves_for(self.turn)
 
-
     def fifty_move_rule(self):
         pass
-    

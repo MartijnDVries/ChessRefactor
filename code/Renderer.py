@@ -2,7 +2,7 @@ import pygame
 from Image import Image
 from config import *
 from Views import Viewer
-from Events import EventChecker
+from Events import Events
 from ctypes import windll
 from Game import Game
 
@@ -17,7 +17,7 @@ class Render:
         self.background_image = None
         self.background_color = None
         self.Viewer = Viewer(self.display)
-        self.Events = EventChecker()
+        self.Events = Events()
         self.clock = pygame.time.Clock()
         self.Game = Game()
         self.run = True
