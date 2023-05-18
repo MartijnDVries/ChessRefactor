@@ -1,7 +1,10 @@
-from SquareTableNewApproach import SquareTableNewApproach
+from SquareTable import SquareTable
 from SquareTableNumpy import SquareTableNumpy
-from CheckForChecksNewApproach import CheckForChecksNewApproach
+from CheckForChecks import CheckForChecks
 from CheckForChecksNumpy import CheckForChecksNumpy
+
+from Moves import LegalMoves
+from MovesNumpy import LegalMovesNumpy
 import timeit
 from config import *
 
@@ -9,11 +12,13 @@ class Compare():
     
     def __init__(self):
         self.table = SquareTableNumpy()
-        self.table_new = SquareTableNewApproach()
+        self.table_new = SquareTable()
         self.check = CheckForChecksNumpy()
-        self.check_new = CheckForChecksNewApproach()
+        self.check_new = CheckForChecks()
+        self.moves = LegalMoves()
+        self.moves_new = LegalMovesNumpy()
         self.table = self.table.squareTableNumpy
-        self.table_new = self.table_new.squareTableNumpy
+        self.table_new = self.table_new.squareTable
         self.color = 'WHITE'
         self.side = 'king_side'
 
@@ -24,17 +29,17 @@ class Compare():
 
 
     def execMethod1(self):
-        self.check.is_in_check('WHITE', self.table)
+        self.moves.moves_list(self.table_new, 'WHITE')
 
     def execMethod2(self):
-        self.check_new.is_in_check('WHITE', self.table_new)
+        self.moves_new.moves_list(self.table, 'WHITE')
 
         
     def compare(self):
-        print(f"EXEC METHOD 1 FINSIHED IN: ")
-        print(timeit.timeit('Compare().execMethod1()', setup='from __main__ import Compare', number=100000))
-        print(f"EXEC METHOD 2 FINSIHED IN: ")
-        print(timeit.timeit('Compare().execMethod2()', setup='from __main__ import Compare', number=100000))
+        print(f"METHOD 1 FINSIHED IN: ")
+        print(timeit.timeit('Compare().execMethod1()', setup='from __main__ import Compare', number=10000))
+        print(f"METHOD 2 FINSIHED IN: ")
+        print(timeit.timeit('Compare().execMethod2()', setup='from __main__ import Compare', number=10000))
 
 
 if __name__ == "__main__":

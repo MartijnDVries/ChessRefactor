@@ -29,8 +29,6 @@ class SquareTableNumpy(metaclass=Singleton):
 
 
     def getRow(self, square_index):
-
-
         return f'\n\
         SQUARE: {self.getSquareFromIndex(square_index)}\n\
         COLOR: {self.squareTableNumpy[square_index][COLOR]}\n\
@@ -139,16 +137,27 @@ class SquareTableNumpy(metaclass=Singleton):
         else:
             return table[square_index][PIECENAME] != ""
         
+
     def hasColor(self, square_index, color, table=None):
         if not isinstance(table, np.ndarray):
             table = self.squareTableNumpy
         return table[square_index][COLOR] == color
+    
+    @staticmethod
+    def hasPieceOnSquare(square, piece_name = None):
+        if piece_name:
+            return square[PIECENAME] == piece_name
+        return square[PIECENAME] != ""
+    
 
-
+    @staticmethod
+    def hasColorOnSquare(square, color):
+        return square[COLOR] == color
 
 
     def print(self, square):
         print(self.getRow(square))
+
 
 
     def printTable(self, table=None):

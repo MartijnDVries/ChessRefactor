@@ -13,10 +13,12 @@ class GetSquaresNumpy(metaclass=Singleton):
         self.table = self.tableClass.squareTableNumpy
         self.numbers = [row for row in range(1, 9)]
         self.files = 'abcdefgh'
-        self.topEdgeSquares = {56, 57, 58, 58, 60, 61, 62, 63}
+        self.topEdgeSquares = {56, 57, 58, 59, 60, 61, 62, 63}
         self.bottomRowEdgeSquares = {0, 1, 2, 3, 4, 5, 6, 7}
-        self.leftEdgeSquares = {0, 8, 16, 24, 32, 40, 48, 46}
+        self.leftEdgeSquares = {0, 8, 16, 24, 32, 40, 48, 56}
         self.rightEdgeSquares = {7, 15, 23, 31, 39, 47, 55, 63}
+        self.secondRank = {8, 9, 10, 11, 12, 13, 14, 15}
+        self.seventhRank = {48, 49, 50, 51, 52, 53, 54, 55}
         
 
     def getNewSquare(self, square, add_file, add_square_number):
@@ -37,23 +39,22 @@ class GetSquaresNumpy(metaclass=Singleton):
 
     def king_squares(self, square):
         squares = set()
-        index =  self.tableClass.getSquareIndex(square)
-        if index not in self.leftEdgeSquares:
-            squares.add(int(index - LEFT))
-            if index not in self.topEdgeSquares:
-                squares.add(int(index + LEFTUP))
-            if index not in self.bottomRowEdgeSquares:
-                squares.add(int(index - LEFTDOWN))
-        if index not in self.rightEdgeSquares:
-            squares.add(int(index + RIGHT))
-            if index not in self.topEdgeSquares:
-                squares.add(int(index + RIGHTUP))
-            if index not in self.bottomRowEdgeSquares:
-                squares.add(int(index - RIGHTDOWN))
-        if index not in self.bottomRowEdgeSquares:
-            squares.add(int(index - DOWN))
-        if index not in self.topEdgeSquares:
-            squares.add(int(index + UP))
+        if square not in self.leftEdgeSquares:
+            squares.add(int(square - LEFT))
+            if square not in self.topEdgeSquares:
+                squares.add(int(square + LEFTUP))
+            if square not in self.bottomRowEdgeSquares:
+                squares.add(int(square - LEFTDOWN))
+        if square not in self.rightEdgeSquares:
+            squares.add(int(square + RIGHT))
+            if square not in self.topEdgeSquares:
+                squares.add(int(square + RIGHTUP))
+            if square not in self.bottomRowEdgeSquares:
+                squares.add(int(square - RIGHTDOWN))
+        if square not in self.bottomRowEdgeSquares:
+            squares.add(int(square - DOWN))
+        if square not in self.topEdgeSquares:
+            squares.add(int(square + UP))
         return squares
         
 
@@ -148,15 +149,14 @@ class GetSquaresNumpy(metaclass=Singleton):
 
     def pawn_move_squares_from(self, square, own_color):
         squares = []
-        pawn_row = int(square[1])
         if own_color == "WHITE":
             squares.append(int(square + UP))
-            if pawn_row == 2:
+            if square in self.secondRank:
                 squares.append(int(square + 2 * UP))
             return squares
         if own_color == "BLACK":
             squares.append(int(square - DOWN))
-            if pawn_row == 7:
+            if square in self.seventhRank:
                 squares.append(int(square - 2 * DOWN))
             return squares
 
@@ -172,20 +172,6 @@ if __name__ == "__main__":
         return list(get.horizontal_squares_from_2(A1, "left"))
 
     print(get_squares())
-
-    # def get_squares_2():
-    #     for index in get.horizontal_squares_from_2("e1", "left"):
-    #         square = s.getSquareFromIndex(index)
-    #         print(square)
-
-
-    # print(get_squares())
-    # get_squares_2()
-
-    # print(list(get.horizontal_squares_from_2("e1", "left")))
-    # timeit.timeit('GetSquares().king_squares("e1")', setup='from __ main__ import GetSquares', number=10000)
-    # timeit.timeit('GetSquares().king_squares_numpy("e1")', setup='from __ main__ import GetSquares', number=10000)
-
 
     # print(timeit.timeit('get.horizontal_squares_from("e1", "right")', setup='from __main__ import get', number=1000000))
 

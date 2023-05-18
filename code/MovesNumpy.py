@@ -1,15 +1,15 @@
 from config import *
-from CheckForChecks import CheckForChecks
-from SquareTable import SquareTable
+from CheckForChecksNumpy import CheckForChecksNumpy
+from SquareTableNumpy import SquareTableNumpy
 from Singleton import Singleton
-from GetSquares import GetSquares
+from GetSquaresNumpy import GetSquaresNumpy
 import ujson
 
-class LegalMoves(metaclass=Singleton):
+class LegalMovesNumpy(metaclass=Singleton):
     def __init__(self):
-        self.check = CheckForChecks()
-        self.table = SquareTable()
-        self.get = GetSquares()
+        self.check = CheckForChecksNumpy()
+        self.table = SquareTableNumpy()
+        self.get = GetSquaresNumpy()
         self.white_kingcastle_rights = True
         self.white_queencastle_rights = True
         self.black_kingcastle_rights = True
@@ -46,16 +46,18 @@ class LegalMoves(metaclass=Singleton):
                 self.black_kingcastle_rights = False
                 self.black_queencastle_rights = False
         
-        
-    def copy(self, table):
-        return ujson.loads(ujson.dumps(table))
     
     def add_move(self, table, piece_square, square, own_color):
-        table_copy = self.copy(table)
+        table_copy = self.table.copyTable(table)
+
         self.table.setMove(piece_square, square, table_copy)
         if not(self.check.is_in_check(own_color, table_copy)):
-            return f"{piece_square}:{square}"
+            # return f"{piece_square}:{square}"
+            return f"{self.test_for_squares_names(piece_square)}:{self.test_for_squares_names(square)}"
         return None
+    
+    def test_for_squares_names(self, square):
+        return self.table.getSquareFromIndex(square)
 
     def moves_list(self, table, own_color):
         moves_list = []
@@ -66,49 +68,48 @@ class LegalMoves(metaclass=Singleton):
         # Castling
         moves_list.extend(self.check_castling(table, own_color))
 
-        for square in table:
-            
-            
-            if not self.table.hasColor(square, own_color, table) or not self.table.hasPiece(square, table=table):
+        for square_index, square in enumerate(table):
+
+            if not self.table.hasColorOnSquare(square, own_color):
                 continue
 
-            if self.table.hasPiece(square, "ROOK", table):
+            if self.table.hasPieceOnSquare(square, "ROOK"):
                 for dir in ["right", "left"]:
-                    squares = self.get.horizontal_squares_from(square, dir)
-                    moves_list.extend(self.piece_moves(table, square, squares, own_color))
+                    squares = list(self.get.horizontal_squares_from(square_index, dir))
+                    moves_list.extend(self.piece_moves(table, square_index, squares, own_color))
                 for dir in ["up", "down"]:
-                    squares = self.get.vertical_squares_from(square, dir)
-                    moves_list.extend(self.piece_moves(table, square, squares, own_color))
+                    squares = list(self.get.vertical_squares_from(square_index, dir))
+                    moves_list.extend(self.piece_moves(table, square_index, squares, own_color))
 
-            elif self.table.hasPiece(square, "PAWN", table):
-                squares = self.get.pawn_move_squares_from(square, own_color)
-                moves_list.extend(self.pawn_moves(table, square, squares, own_color))
-                squares = self.get.pawn_capture_squares_from(square, own_color)
-                moves_list.extend(self.pawn_captures(table, square, squares, own_color))
+            elif self.table.hasPieceOnSquare(square, "PAWN"):
+                squares = self.get.pawn_move_squares_from(square_index, own_color)
+                moves_list.extend(self.pawn_moves(table, square_index, squares, own_color))
+                squares = self.get.pawn_capture_squares_from(square_index, own_color)
+                moves_list.extend(self.pawn_captures(table, square_index, squares, own_color))
 
-            elif self.table.hasPiece(square, "BISHOP", table):
+            elif self.table.hasPieceOnSquare(square, "BISHOP"):
                 for dir in ["right_up", "right_down", "left_up", "left_down"]:
-                    squares = self.get.diagonal_squares_from(square, dir)
-                    moves_list.extend(self.piece_moves(table, square, squares, own_color))
+                    squares = list(self.get.diagonal_squares_from(square_index, dir))
+                    moves_list.extend(self.piece_moves(table, square_index, squares, own_color))
 
-            elif self.table.hasPiece(square, "KNIGHT", table):
-                squares = self.get.knight_squares_from(square)
-                moves_list.extend(self.knight_moves(table, square, squares, own_color))
+            elif self.table.hasPieceOnSquare(square, "KNIGHT"):
+                squares = self.get.knight_squares_from(square_index)
+                moves_list.extend(self.knight_moves(table, square_index, squares, own_color))
 
-            elif self.table.hasPiece(square, "QUEEN", table):
+            elif self.table.hasPieceOnSquare(square, "QUEEN"):
                 for dir in ["right_up", "right_down", "left_up", "left_down"]:
-                    squares = self.get.diagonal_squares_from(square, dir)
-                    moves_list.extend(self.piece_moves(table, square, squares, own_color))
+                    squares = list(self.get.diagonal_squares_from(square_index, dir))
+                    moves_list.extend(self.piece_moves(table, square_index, squares, own_color))
                 for dir in ["right", "left"]:
-                    squares = self.get.horizontal_squares_from(square, dir)
-                    moves_list.extend(self.piece_moves(table, square, squares, own_color))
+                    squares = list(self.get.horizontal_squares_from(square_index, dir))
+                    moves_list.extend(self.piece_moves(table, square_index, squares, own_color))
                 for dir in ["up", "down"]:
-                    squares = self.get.vertical_squares_from(square, dir)
-                    moves_list.extend(self.piece_moves(table, square, squares, own_color))
+                    squares = list(self.get.vertical_squares_from(square_index, dir))
+                    moves_list.extend(self.piece_moves(table, square_index, squares, own_color))
 
-            elif self.table.hasPiece(square, "KING", table):
-                squares = self.get.king_squares(square)
-                moves_list.extend(self.king_moves(table, square, squares, own_color))
+            elif self.table.hasPieceOnSquare(square, "KING"):
+                squares = self.get.king_squares(square_index)
+                moves_list.extend(self.king_moves(table, square_index, squares, own_color))
        
         self.moves = filter_none(moves_list)
 
@@ -121,7 +122,7 @@ class LegalMoves(metaclass=Singleton):
             if self.table.hasColor(square, enemy_color, table):
                 moves.append(self.add_move(table, piece_square, square, own_color))
                 return moves
-            elif not self.table.hasPiece(square, table):
+            elif not self.table.hasPiece(square, table=table):
                 moves.append(self.add_move(table, piece_square, square, own_color))
         return moves
     
@@ -188,41 +189,43 @@ class LegalMoves(metaclass=Singleton):
             return moves
         
         # If last move is not enemy pawn
-        new_square = self.last_move['move'][3:]
-        if not self.table.hasColor(new_square, enemy_color, table):
-            return moves
+        last_enemy_square = self.last_move['move'][3:]
+        last_enemy_square_index = self.table.getSquareIndex(last_enemy_square)
+
         
          # if our pawn is next to the enemy pawn and the capture square is empty
-        left_square = self.get.getNewSquare(new_square, 1, 0)
-        right_square = self.get.getNewSquare(new_square, -1, 0)
+        if last_enemy_square_index - LEFT:
+            left_square = last_enemy_square_index - LEFT
+        if last_enemy_square_index + RIGHT:
+            right_square = last_enemy_square_index + RIGHT
 
-        if new_row == 5:
-            capture_square = self.get.getNewSquare(new_square, 0, 1)
+
+        if own_color == 'WHITE':
+            capture_square = last_enemy_square_index + UP
         else:
-            capture_square = self.get.getNewSquare(new_square, 0, -1)
-        try:
-            if self.table.hasPiece(left_square, "PAWN", table)\
-                and self.table.hasColor(left_square, own_color, table)\
-                and not self.table.hasPiece(capture_square, table=table):
-                table_copy = self.copy(table)
-                self.table.setEnpassantMove(new_square, left_square, capture_square, table_copy)
-                if not self.check.is_in_check(own_color, table_copy):
-                    move = f"{left_square}:{capture_square}"
-                    moves.append(move)
-        except KeyError:
-            pass
+            capture_square = last_enemy_square_index - DOWN
 
-        try:
-            if self.table.hasPiece(right_square, "PAWN", table)\
-                and self.table.hasColor(right_square, own_color, table)\
-                and not self.table.hasPiece(capture_square, table=table):
-                table_copy = self.copy(table)
-                self.table.setEnpassantMove(new_square, right_square, capture_square, table_copy)
-                if not self.check.is_in_check(own_color, table_copy):
-                    move = f"{right_square}:{capture_square}"
-                    moves.append(move)
-        except KeyError:
-            pass
+        if self.table.hasPiece(left_square, "PAWN", table)\
+              and self.table.hasColor(left_square, own_color, table)\
+              and not self.table.hasPiece(capture_square, table=table):
+            table_copy = self.table.copyTable(table)
+            self.table.setEnpassantMove(last_enemy_square_index, left_square, capture_square, table_copy)
+            if not self.check.is_in_check(own_color, table_copy):
+                # move = f"{left_square}:{capture_square}"
+                move = f"{self.test_for_squares_names(left_square)}:{self.test_for_squares_names(capture_square)}"
+                moves.append(move)
+  
+
+        if self.table.hasPiece(right_square, "PAWN", table)\
+              and self.table.hasColor(right_square, own_color, table)\
+              and not self.table.hasPiece(capture_square, table=table):
+            table_copy = self.table.copyTable(table)
+            self.table.setEnpassantMove(last_enemy_square_index, right_square, capture_square, table_copy)
+            if not self.check.is_in_check(own_color, table_copy):
+                # move = f"{right_square}:{capture_square}"
+                move = f"{self.test_for_squares_names(right_square)}:{self.test_for_squares_names(capture_square)}"
+                moves.append(move)
+
       
         return moves
 
@@ -232,17 +235,17 @@ class LegalMoves(metaclass=Singleton):
             return moves
         if own_color == "WHITE":
             if self.white_kingcastle_rights:
-                if not self.table.hasPiece('f1') and not self.table.hasPiece('g1'):
+                if not self.table.hasPiece(F1) and not self.table.hasPiece(G1):
                     moves.append("O-O")
             if self.white_queencastle_rights:
-                if not self.table.hasPiece('d1') and not self.table.hasPiece('c1') and not self.table.hasPiece('b1'):
+                if not self.table.hasPiece(D1) and not self.table.hasPiece(C1) and not self.table.hasPiece(B1):
                     moves.append("O-O-O")
         elif own_color == "BLACK":
             if self.black_kingcastle_rights:
-                if not self.table.hasPiece('f8') and not self.table.hasPiece('g8'):
+                if not self.table.hasPiece(F8) and not self.table.hasPiece(G8):
                     moves.append("O-O")
             if self.black_queencastle_rights:
-                if not self.table.hasPiece('d8') and not self.table.hasPiece('c8') and not self.table.hasPiece('b8'):
+                if not self.table.hasPiece(D8) and not self.table.hasPiece(C8) and not self.table.hasPiece(B8):
                     moves.append("O-O-O")
         return moves
         
@@ -251,12 +254,15 @@ class LegalMoves(metaclass=Singleton):
     
                     
 if __name__ == "__main__":
-    l = LegalMoves()
-    s = SquareTable()
+    l = LegalMovesNumpy()
+    s = SquareTableNumpy()
     s_list = s.getTable()
-
     
-    print(l.moves_list(s_list, 'WHITE'))
+    s.setMove(D2, D5)
+    s.setMove(E7, E5)
+    l.set_last_move('PAWN', 'e7:e5')
+    l.moves_list(s_list, 'WHITE')
+
     print(l.moves)
 
     
