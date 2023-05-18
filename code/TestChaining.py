@@ -21,7 +21,6 @@ class Chain():
             return "FALSE"
         
     def __new__(cls, *args, **kwargs):
-        print(hex(id(cls)))
         if not hasattr(cls, 'test_dict'):
             piece_list = ["PAWN", "ROOK", "KING"]
             color_list = ["WHITE", "BLACK"]
