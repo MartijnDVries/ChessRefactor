@@ -23,6 +23,7 @@ class LegalMovesNumpy(metaclass=Singleton):
             self.set_last_move(piece_name, move)
             if piece_name == "KING" or piece_name == "ROOK":
                 self.set_castling_rights(move, piece_name, color)
+                print("castle rights after setting: wk wq bk bq", self.white_kingcastle_rights, self.white_queencastle_rights, self.black_kingcastle_rights, self.black_queencastle_rights)
             return True
 
     def set_last_move(self, piece_name, move):
@@ -40,6 +41,7 @@ class LegalMovesNumpy(metaclass=Singleton):
 
     def set_castling_rights(self, move, piece_name, color=None):
         if move in self.castle_moves:
+            
             if move == 'O-O':
                 if color == 'WHITE':
                     self.white_kingcastle_rights = False
@@ -50,8 +52,10 @@ class LegalMovesNumpy(metaclass=Singleton):
                     self.white_queencastle_rights = False
                 else:
                     self.black_queencastle_rights = False
-        elif piece_name == "ROOK":
-            old_square = move.split(':')[0]
+            return
+        
+        old_square = int(move.split(':')[0])
+        if piece_name == "ROOK":
             if old_square == H1:
                 self.white_kingcastle_rights = False
             if old_square == A1:
