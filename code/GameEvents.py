@@ -81,7 +81,7 @@ class GameEvents:
         black_queencastle_squares = {C8, B8, A8}
         if piece.color == "WHITE":
             if new_square in white_kingcastle_squares:
-                if self.move.is_legal('O-O', "KING"):
+                if self.move.is_legal('O-O', "KING", self.Game.turn):
                     self.positionHandler.castle("WHITE", "king_side")
                     rook = self.pieceCollection.getPiece(H1)
                     rook.update(
@@ -91,7 +91,7 @@ class GameEvents:
                     self.Game.check_game_outcome()
                     return True
             if new_square in white_queencastle_squares:
-                if self.move.is_legal('O-O-O', "KING"):
+                if self.move.is_legal('O-O-O', "KING", self.Game.turn):
                     self.positionHandler.castle("WHITE", "queen_side")
                     rook = self.pieceCollection.getPiece(A1)
                     rook.update(
@@ -102,7 +102,7 @@ class GameEvents:
                     return True
         elif piece.color == "BLACK":
             if new_square in black_kingcastle_squares:
-                if self.move.is_legal('O-O', "KING"):
+                if self.move.is_legal('O-O', "KING", self.Game.turn):
                     self.positionHandler.castle("BLACK", "king_side")
                     rook = self.pieceCollection.getPiece(H8)
                     rook.update(
@@ -112,7 +112,7 @@ class GameEvents:
                     self.Game.check_game_outcome()
                     return True
             if new_square in black_queencastle_squares:
-                if self.move.is_legal('O-O-O', "KING"):
+                if self.move.is_legal('O-O-O', "KING", self.Game.turn):
                     self.positionHandler.castle("BLACK", "queen_side")
                     rook = self.pieceCollection.getPiece(A8)
                     rook.update(

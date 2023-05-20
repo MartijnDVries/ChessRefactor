@@ -18,13 +18,11 @@ class LegalMovesNumpy(metaclass=Singleton):
         self.castle_moves = {'O-O', 'O-O-O'}
         self.moves = []
 
-    def is_legal(self, move, piece_name):
-        print("move in is legal", move)
+    def is_legal(self, move, piece_name, color=None):
         if move in self.moves:
             self.set_last_move(piece_name, move)
             if piece_name == "KING" or piece_name == "ROOK":
-                old_square = move[:2]
-                self.set_castling_rights(old_square, piece_name)
+                self.set_castling_rights(move, piece_name, color)
             return True
 
     def set_last_move(self, piece_name, move):
@@ -40,21 +38,33 @@ class LegalMovesNumpy(metaclass=Singleton):
             last_old_square = self.last_move['move'].split(':')
             return last_old_square[1]
 
-    def set_castling_rights(self, old_square, piece_name):
-        if piece_name == "ROOK":
-            if old_square == 'h1':
+    def set_castling_rights(self, move, piece_name, color=None):
+        if move in self.castle_moves:
+            if move == 'O-O':
+                if color == 'WHITE':
+                    self.white_kingcastle_rights = False
+                else:
+                    self.black_kingcastle_rights = False
+            elif move == 'O-O-O':
+                if color == 'WHITE':
+                    self.white_queencastle_rights = False
+                else:
+                    self.black_queencastle_rights = False
+        elif piece_name == "ROOK":
+            old_square = move.split(':')[0]
+            if old_square == H1:
                 self.white_kingcastle_rights = False
-            if old_square == 'a1':
+            if old_square == A1:
                 self.white_kingcastle_rights = False
-            if old_square == 'h8':
+            if old_square == H8:
                 self.black_kingcastle_rights = False
-            if old_square == 'a8':
+            if old_square == A8:
                 self.black_queencastle_rights = False
         elif piece_name == "KING":
-            if old_square == 'e1':
+            if old_square == E1:
                 self.white_kingcastle_rights = False
                 self.white_queencastle_rights = False
-            if old_square == 'e8':
+            if old_square == E8:
                 self.black_kingcastle_rights = False
                 self.black_queencastle_rights = False
 
@@ -100,10 +110,6 @@ class LegalMovesNumpy(metaclass=Singleton):
                 squares = self.get.pawn_move_squares_from(
                     square_index, own_color)
                 moves_list.extend(self.pawn_moves(
-                    position, square_index, squares, own_color))
-                squares = self.get.pawn_capture_squares_from(
-                    square_index, own_color)
-                moves_list.extend(self.pawn_captures(
                     position, square_index, squares, own_color))
 
             elif self.positionHandler.hasPieceOnSquare(square, "BISHOP"):

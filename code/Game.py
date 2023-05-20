@@ -11,7 +11,7 @@ class Game(metaclass=Singleton):
         self.turn = "WHITE"
         self.create_moves_for(self.turn)
         self.move = 0
-        self.quit = False
+        self.quit = True
         self.start = True
 
     def create_moves_for(self, color):
@@ -21,8 +21,8 @@ class Game(metaclass=Singleton):
     def setTurn(self):
         if self.turn == "WHITE":
             self.turn = "BLACK"
-            return
-        self.turn = "WHITE"
+        else:
+            self.turn = "WHITE"
 
     def check_game_outcome(self):
         self.setTurn()
